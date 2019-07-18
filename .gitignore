@@ -1,0 +1,33 @@
+/target/
+/logs
+!.mvn/wrapper/maven-wrapper.jar
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+*.log
+
+### NetBeans ###
+/nbproject/private/
+/build/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+/vimbika-pro-api/target/
+/vimbika-pro-domain/target/
+/vimbika-pro-repository/target/
+/vimbika-pro-service/target/
+/vimbika-pro-service-impl/target
