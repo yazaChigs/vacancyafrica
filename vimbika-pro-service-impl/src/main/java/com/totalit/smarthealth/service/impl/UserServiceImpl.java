@@ -3,6 +3,7 @@ package com.totalit.smarthealth.service.impl;
 import com.totalit.smarthealth.domain.User;
 import com.totalit.smarthealth.repository.UserRepo;
 import com.totalit.smarthealth.service.UserService;
+import com.totalit.smarthealth.util.AppUtil;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -134,11 +135,15 @@ public class UserServiceImpl implements UserService {
          if (t.getId() == null) {
             t.setCreatedBy(getCurrentUser());
             t.setDateCreated(new Date());
-             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            t.setUuid(AppUtil.generateUUID());
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             String hashedPassword = encoder.encode(t.getPassword());
             t.setPassword(hashedPassword);
             return userRepo.save(t);
         }
+          if(t.getCreatedById()!=null){
+               t.setCreatedBy(get(t.getCreatedById()));
+           }
         t.setModifiedBy(getCurrentUser());
         t.setDateModified(new Date());
         return userRepo.save(t);

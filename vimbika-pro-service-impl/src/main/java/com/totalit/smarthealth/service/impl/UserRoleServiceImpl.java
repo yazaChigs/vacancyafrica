@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 /**
  *
- * @author Judge Muzinda
+ * @author Roy
  */
 @Service
 @Transactional
@@ -24,7 +24,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     @Resource
     private UserService userService;
 
-    @Autowired
+    @Override
     public List<UserRole> getAll() {
         return userRoleRepo.findByActive(Boolean.TRUE);
     }
@@ -37,6 +37,7 @@ public class UserRoleServiceImpl implements UserRoleService {
             throw new IllegalStateException("Item to be deleted is in an inconsistent state");
         }
         t.setActive(Boolean.FALSE);
+        t.setDeleted(Boolean.TRUE);
         userRoleRepo.save(t);
     }
 
@@ -48,18 +49,22 @@ public class UserRoleServiceImpl implements UserRoleService {
     @Override
     public UserRole save(UserRole t) {
         if (t.getId() == null) {
-          //  t.setCreatedBy(userService.getCurrentUser());
+           t.setCreatedBy(userService.getCurrentUser());
             t.setDateCreated(new Date());
+            t.setUuid(AppUtil.generateUUID());
             return userRoleRepo.save(t);
         }
-        //t.setModifiedBy(userService.getCurrentUser());
+         if(t.getCreatedById()!=null){
+               t.setCreatedBy(userService.get(t.getCreatedById()));
+           }
+        t.setModifiedBy(userService.getCurrentUser());
         t.setDateModified(new Date());
         return userRoleRepo.save(t);
     }
 
     @Override
     public UserRole getByName(String name) {
-        return userRoleRepo.findByName(name);
+        return userRoleRepo.findByActiveAndName(Boolean.TRUE, name);
     }
   
 

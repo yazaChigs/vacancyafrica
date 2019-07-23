@@ -69,12 +69,12 @@ UserRole role = new UserRole();
         Set<UserRole> roles = new HashSet<>();
         roles.add(ur);
         User user = new User();
-        user.setFirstName("Roy");
-        user.setLastName("Kanavheti");
+        user.setFirstName("Shepherd");
+        user.setLastName("Chikomo");
         user.setActive(Boolean.TRUE);
         user.setAddress("17057 Zengeza 4 Chitungwiza");
-        user.setUserName("roy@totalit.org");
-        user.setPassword("kanaz1994");
+        user.setUserName("shepherd@totalit.org");
+        user.setPassword("Pass1234");
         user.setUserRoles(roles);
         User u = userService.findByUserName(user.getUserName());
         if(u == null){

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 edward.
+ * Copyright 2019 roy.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +22,16 @@ import org.springframework.data.repository.NoRepositoryBean;
 
 /**
  *
- * @author Judge Muzinda
+ * @author Roy
  * @param <T>
  * @param <ID>
  */
 @NoRepositoryBean
 public interface AbstractNameDescRepo<T , ID extends Serializable> extends AbstractRepo<T, ID> {
     
-    public List<T> findByNameLike(String name);
+    public List<T> findByActiveAndNameLike(Boolean active, String name);
     
-    public T findByName(String name);
+    public T findByActiveAndName(Boolean active, String name);
     
     public List<T> findByActiveOrderByNameAsc(Boolean active);
 }

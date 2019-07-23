@@ -103,6 +103,7 @@ public class UserResource  {
         Map<String, Object> response = new HashMap<>();
         try {
             userService.delete(userService.get(id));
+            
         } catch (Exception ex) {
             response.put("message", "System error occurred deleting item");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);

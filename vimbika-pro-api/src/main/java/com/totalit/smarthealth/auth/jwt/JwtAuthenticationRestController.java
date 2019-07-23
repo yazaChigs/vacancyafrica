@@ -41,6 +41,9 @@ public class JwtAuthenticationRestController {
 	private JwtTokenUtil jwtTokenUtil;
 	@Autowired
 	private UserDetailsService jwtInMemoryUserDetailsService;
+        
+        @Autowired
+        private UserService userService;
 
 	@RequestMapping(value = "${jwt.get.token.uri}", method = RequestMethod.POST)
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtTokenRequest authenticationRequest)
@@ -48,6 +51,10 @@ public class JwtAuthenticationRestController {
 		authenticate(authenticationRequest.getUserName(), authenticationRequest.getPassword());
 		final UserDetails userDetails = jwtInMemoryUserDetailsService.loadUserByUsername(authenticationRequest.getUserName());
 		final String token = jwtTokenUtil.generateToken(userDetails);
+                final User user = userService.findByUserName(authenticationRequest.getUserName());
+                if(user != null){
+                    return ResponseEntity.ok(new JwtTokenResponse(token, user));
+                }
 		return ResponseEntity.ok(new JwtTokenResponse(token));
 	}
        
