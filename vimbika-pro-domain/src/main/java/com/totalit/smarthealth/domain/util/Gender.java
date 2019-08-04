@@ -10,7 +10,7 @@ package com.totalit.smarthealth.domain.util;
  * @author Roy
  */
 public enum Gender {
-    MALE(1), FEMALE(2);
+    MALE(1), FEMALE(2), OTHER(3);
 
     private final Integer code;
 
@@ -28,8 +28,10 @@ public enum Gender {
                 return MALE;
             case 2:
                 return FEMALE;
+                case 3:
+                return OTHER;
             default:
-                throw new IllegalArgumentException("Unknown parameter passed to method expected {1-2} and receieved :" + code);
+                throw new IllegalArgumentException("Unknown parameter passed to method expected {1-3} and receieved :" + code);
         }
     }
 
@@ -39,10 +41,12 @@ public enum Gender {
                 return MALE;
             case "female":
                 return FEMALE;
+                case "other":
+                return OTHER;
             case "":
                 return null;
             default:
-                throw new IllegalArgumentException("Unknown parameter passed to method expected {1-2} and receieved :" + code);
+                throw new IllegalArgumentException("Unknown parameter passed to method expected {1-3} and receieved :" + code);
         }
     }
 
@@ -50,7 +54,7 @@ public enum Gender {
         return StringUtils.toCamelCase3(super.name());
     }
 
-    private static final Gender[] VALUES = {Gender.MALE, Gender.FEMALE};
+    private static final Gender[] VALUES = {Gender.MALE, Gender.FEMALE, Gender.OTHER};
 
     public static Gender[] getItems() {
         return VALUES.clone();

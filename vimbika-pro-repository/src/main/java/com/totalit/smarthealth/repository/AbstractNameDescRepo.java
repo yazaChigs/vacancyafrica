@@ -29,9 +29,8 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface AbstractNameDescRepo<T , ID extends Serializable> extends AbstractRepo<T, ID> {
     
-    public List<T> findByActiveAndNameLike(Boolean active, String name);
-    
-    public T findByActiveAndName(Boolean active, String name);
-    
+    public List<T> findByActiveAndNameLike(Boolean active, String name);    
+    public T findByActiveAndName(Boolean active, String name);    
     public List<T> findByActiveOrderByNameAsc(Boolean active);
+    public Boolean existsByNameIgnoreCaseAndActive(String name, Boolean active);
 }

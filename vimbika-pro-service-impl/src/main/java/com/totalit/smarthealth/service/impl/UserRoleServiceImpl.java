@@ -90,6 +90,6 @@ public class UserRoleServiceImpl implements UserRoleService {
 
     @Override
     public Boolean checkDuplicate(UserRole current, UserRole old) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return userRoleRepo.existsByNameIgnoreCaseAndActive(current.getName(), Boolean.TRUE);
     }
 }

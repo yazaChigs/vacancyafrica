@@ -5,24 +5,22 @@
  */
 package com.totalit.smarthealth.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.TypeAlias;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
 /**
  *
  * @author roy
  */
-@Document(collection="modules")
-@TypeAlias("module")
-@Getter @Setter @NoArgsConstructor
-public class Module extends BaseName{
+@Getter
+@Setter
+@NoArgsConstructor
+abstract public class BaseCompany extends BaseEntity {
 
-    public Module(String name) {
-        super(name);
-    }
-
-    
+    @JsonIgnore
+    @DBRef
+    private Company company;
 }

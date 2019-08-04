@@ -8,12 +8,10 @@ package com.totalit.smarthealth.controller;
 
 import com.totalit.smarthealth.domain.User;
 import com.totalit.smarthealth.service.UserService;
-import com.totalit.smarthealth.util.DateUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
-@RequestMapping("/api/admin/user")
+@RequestMapping("/api/user")
 public class UserResource  {
 
     public static final Logger logger = LoggerFactory.getLogger(UserResource.class);
@@ -36,23 +34,26 @@ public class UserResource  {
    
 
     @PostMapping("/save")
-    @ApiOperation("Persists new user  object to the database")
+    @ApiOperation("Persists User object to the database")
     public ResponseEntity<Map<String, Object>> saveUser(@RequestBody User user) {
-        logger.info("Saving User " + user.getId());
-        if(user.getDateOfBirth()!=null){
-          user.setDob(DateUtil.getDateFromStringApi(user.getDateOfBirth()));
-        }
         Map<String, Object> response = new HashMap<>();
-        if (!response.isEmpty()) {
-            response.put("message", "Validation error: Username Exist");
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
+        boolean exist = false;
         try {
-            userService.save(user);
+              if(!userService.checkDuplicate(user, user)){
+                User u =  userService.save(user); 
+                response.put("item", u);
+              }else{
+                    exist = true;
+              }
+            
         } catch (Exception ex) {
             ex.printStackTrace();
             response.put("message", "System error occurred saving item");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        if(exist){
+            response.put("duplicate", true);
+            return new ResponseEntity<>(response, HttpStatus.OK); 
         }
         response.put("message", "User Saved Successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -80,7 +81,7 @@ public class UserResource  {
     }
 
     
-     @GetMapping("/inactive")
+    @GetMapping("/inactive")
     @ApiOperation("Returns All Inactive User Accounts")
     public ResponseEntity<?> getInactiveAccounts() {
         logger.info("Retrieving Inactive User Accounts{}");

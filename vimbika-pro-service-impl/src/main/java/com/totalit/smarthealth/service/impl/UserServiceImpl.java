@@ -1,5 +1,6 @@
 
 package com.totalit.smarthealth.service.impl;
+import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.User;
 import com.totalit.smarthealth.repository.UserRepo;
 import com.totalit.smarthealth.service.UserService;
@@ -89,7 +90,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByUserName(String name) {
-        return userRepo.findByUserName(name);
+        return userRepo.findByActiveAndUserName(Boolean.TRUE, name);
     }
 
     @Override
@@ -151,6 +152,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean checkDuplicate(User current, User old) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         if(current.getId() == null){
+        return userRepo.existsByActiveAndUserNameIgnoreCase(Boolean.TRUE, current.getUserName());
+        }
+        old = get(current.getId());
+        if(current.getUserName().equalsIgnoreCase(old.getUserName())){
+            return Boolean.TRUE;
+        }else{
+            return userRepo.existsByActiveAndUserNameIgnoreCase(Boolean.TRUE, current.getUserName());
+        }
+    }
+
+    @Override
+    public List<User> getByCompany(Company company) {
+        return userRepo.findByActiveAndCompany(Boolean.TRUE, company);
     }
 }

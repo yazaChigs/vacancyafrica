@@ -6,21 +6,18 @@
 package com.totalit.smarthealth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import static com.totalit.smarthealth.controller.UserResource.logger;
-import com.totalit.smarthealth.domain.BaseEntity;
 import com.totalit.smarthealth.domain.BaseName;
 import com.totalit.smarthealth.domain.Module;
 import com.totalit.smarthealth.domain.Permission;
-import com.totalit.smarthealth.domain.User;
+import com.totalit.smarthealth.domain.UserRole;
 import com.totalit.smarthealth.domain.util.BaseNameType;
 import com.totalit.smarthealth.service.GenericNameService;
-import com.totalit.smarthealth.service.GenericService;
 import com.totalit.smarthealth.service.ModuleService;
 import com.totalit.smarthealth.service.PermissionService;
+import com.totalit.smarthealth.service.UserRoleService;
 import com.totalit.smarthealth.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +34,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -55,7 +51,8 @@ public class BaseNameController {
     private ModuleService moduleService;
     @Autowired
     private PermissionService permissionService;
-    
+    @Autowired
+    private UserRoleService roleService;
     
     @PostMapping("/save")
     @ApiOperation("Persists New Generic Name Object to Collection")
@@ -64,18 +61,38 @@ public class BaseNameController {
         Map<String, Object> response = new HashMap<>();       
         ObjectMapper objectMapper = new ObjectMapper(); 
         String itemMessage = "";
+        boolean exist = false;
         try {
             String type = jsonObj.optString("type");
             if(type.equalsIgnoreCase(BaseNameType.MODULE.toString())){
                 Module module = objectMapper.readValue(item, Module.class); 
-                Module m = moduleService.save(module);
-                itemMessage = "Module";
-                response.put("item", m);              
+                if(!moduleService.checkDuplicate(module, module)){
+                    Module m = moduleService.save(module);
+                    itemMessage = "Module";
+                    response.put("item", m);  
+                }else{
+                    exist = true;
+                }
+                            
             }else if(type.equalsIgnoreCase(BaseNameType.PERMISSION.toString())){
                 Permission permission = objectMapper.readValue(item, Permission.class);
+                if(!permissionService.checkDuplicate(permission, permission)){
                 Permission p = permissionService.save(permission);
                 itemMessage = "Permission";
                 response.put("item", p); 
+                }else{
+                    exist = true;
+                }
+            }
+            else if(type.equalsIgnoreCase(BaseNameType.ROLE.toString())){
+                UserRole role = objectMapper.readValue(item, UserRole.class);
+                if(!roleService.checkDuplicate(role, role)){
+                UserRole r = roleService.save(role);
+                itemMessage = "Role";
+                response.put("item", r); 
+                }else{
+                    exist = true;
+                }
             }
             
             
@@ -83,6 +100,11 @@ public class BaseNameController {
             ex.printStackTrace();
             response.put("message", ex.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        
+        if(exist){
+            response.put("duplicate", true);
+            return new ResponseEntity<>(response, HttpStatus.OK); 
         }
         itemMessage = itemMessage + " Saved Successfully"; 
         response.put("message", itemMessage);
@@ -98,11 +120,16 @@ public class BaseNameController {
             response.put("list", list);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
+        else if(type.equalsIgnoreCase(BaseNameType.ROLE.toString())){
+           List<UserRole> list = roleService.getAll();            
+           response.put("list", list);
+           return new ResponseEntity<>(response, HttpStatus.OK); 
+        }
         response.put("message", "Incorrect Parameter (type) Passed");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
-     @DeleteMapping("/delete/{type}/{id}")
+    @DeleteMapping("/delete/{type}/{id}")
     @ApiOperation("Delete BaseName Object")
     public ResponseEntity<Map<String, Object>> delete(@ApiParam(name = "type", value = "type used to fetch the objects") @PathVariable("type") String type,
             @ApiParam(name = "id", value = "id for object to be deleted") @PathVariable("id") String id) {
@@ -116,6 +143,10 @@ public class BaseNameController {
            }else if(type.equalsIgnoreCase(BaseNameType.PERMISSION.toString())){
                delete(permissionService, id);
                itemMessage = "Permission";
+           }
+           else if(type.equalsIgnoreCase(BaseNameType.ROLE.toString())){
+               delete(roleService, id);
+               itemMessage = "Role";
            }
             
         } catch (Exception ex) {
@@ -133,5 +164,6 @@ public class BaseNameController {
          s.setDeleted(Boolean.TRUE);
          service.save(s);
     }
+    
     
 }

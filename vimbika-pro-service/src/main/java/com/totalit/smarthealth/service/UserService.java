@@ -21,9 +21,9 @@ import java.util.Optional;
 
 /**
  *
- * @author Judge Muzinda
+ * @author Roy kanavheti
  */
-public interface UserService extends GenericService<User> {
+public interface UserService extends GenericCompanyService<User> {
 
     public User findByUserName(String name);
 

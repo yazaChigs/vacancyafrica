@@ -24,6 +24,11 @@ abstract public class BaseName extends BaseEntity{
     private String description;
     @Transient
     private BaseNameType type;
-    
+
+    public BaseName(String name) {
+        this.name = name;
+    }
+
+         
 
 }

@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.ExampleMatcher;
+import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,7 +75,15 @@ public class ModuleServiceImpl  implements ModuleService {
 
     @Override
     public Boolean checkDuplicate(Module current, Module old) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(current.getId() == null){
+        return repo.existsByNameIgnoreCaseAndActive(current.getName(), Boolean.TRUE);
+        }
+        old = get(current.getId());
+        if(current.getName().equalsIgnoreCase(old.getName())){
+            return Boolean.TRUE;
+        }else{
+            return repo.existsByNameIgnoreCaseAndActive(current.getName(), Boolean.TRUE);
+        }
     }
 
     @Override

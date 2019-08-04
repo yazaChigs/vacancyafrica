@@ -20,9 +20,10 @@ import org.springframework.stereotype.Repository;
 
 /**
  *
- * @author Edward Zengeni
+ * @author Roy kanavheti
  */
 @Repository
-public interface UserRepo extends AbstractRepo<User, String> {
-    public User findByUserName(String userName);
+public interface UserRepo extends AbstractCompanyRepository<User, String> {
+    public User findByActiveAndUserName(Boolean active, String userName);
+    public Boolean existsByActiveAndUserNameIgnoreCase(Boolean active, String userName);
 }

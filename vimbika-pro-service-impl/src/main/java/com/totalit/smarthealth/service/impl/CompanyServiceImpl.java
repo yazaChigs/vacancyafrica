@@ -5,9 +5,9 @@
  */
 package com.totalit.smarthealth.service.impl;
 
-import com.totalit.smarthealth.domain.Permission;
-import com.totalit.smarthealth.repository.PermissionRepository;
-import com.totalit.smarthealth.service.PermissionService;
+import com.totalit.smarthealth.domain.Company;
+import com.totalit.smarthealth.repository.CompanyRepository;
+import com.totalit.smarthealth.service.CompanyService;
 import com.totalit.smarthealth.service.UserService;
 import com.totalit.smarthealth.util.AppUtil;
 import java.util.Date;
@@ -23,47 +23,42 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
-public class PermissionServiceImpl implements PermissionService{
+public class CompanyServiceImpl implements CompanyService{
 
-     @Autowired
-    private PermissionRepository repo;
+    @Autowired
+    private CompanyRepository repo;
     @Resource
     private UserService userService;
     
     @Override
-    public Permission getByName(String name) {
-        return repo.findByActiveAndName(Boolean.TRUE, name);
-    }
-
-    @Override
-    public List<Permission> getAll() {
+    public List<Company> getAll() {       
         return repo.findByActive(Boolean.TRUE);
     }
 
     @Override
-    public Permission get(String id) {
+    public Company get(String id) {
         return repo.findById(id).get();
     }
 
     @Override
-    public void delete(Permission t) {
+    public void delete(Company t) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<Permission> getPageable() {
+    public List<Company> getPageable() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Permission save(Permission t) {
+    public Company save(Company t) {
         if (t.getId() == null) {
            t.setCreatedBy(userService.getCurrentUser());
             t.setDateCreated(new Date());
             t.setUuid(AppUtil.generateUUID());
             return repo.save(t);
         }
-         if(t.getCreatedById()!=null){
+           if(t.getCreatedById()!=null){
                t.setCreatedBy(userService.get(t.getCreatedById()));
            }
         t.setModifiedBy(userService.getCurrentUser());
@@ -72,22 +67,30 @@ public class PermissionServiceImpl implements PermissionService{
     }
 
     @Override
-    public Boolean checkDuplicate(Permission current, Permission old) {
+    public Boolean checkDuplicate(Company current, Company old) {
+        if(current.getId() == null){
         return repo.existsByNameIgnoreCaseAndActive(current.getName(), Boolean.TRUE);
+        }
+        old = get(current.getId());
+        if(current.getName().equalsIgnoreCase(old.getName())){
+            return Boolean.TRUE;
+        }else{
+            return repo.existsByNameIgnoreCaseAndActive(current.getName(), Boolean.TRUE);
+        }
     }
 
     @Override
-    public List<Permission> findByActiveAndDateModified(Boolean active, Date date) {
+    public List<Company> findByActiveAndDateModified(Boolean active, Date date) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<Permission> findByActiveAndDateCreated(Boolean active, Date date) {
+    public List<Company> findByActiveAndDateCreated(Boolean active, Date date) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Permission findByUuid(String uuid) {
+    public Company findByUuid(String uuid) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
