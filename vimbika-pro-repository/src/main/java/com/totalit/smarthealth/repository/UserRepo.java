@@ -15,6 +15,8 @@
  */
 package com.totalit.smarthealth.repository;
 
+
+import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.User;
 import org.springframework.stereotype.Repository;
 
@@ -26,4 +28,5 @@ import org.springframework.stereotype.Repository;
 public interface UserRepo extends AbstractCompanyRepository<User, String> {
     public User findByActiveAndUserName(Boolean active, String userName);
     public Boolean existsByActiveAndUserNameIgnoreCase(Boolean active, String userName);
+    public Boolean existsByActiveAndUserNameIgnoreCaseAndCompany(Boolean active, String userName, Company company);
 }

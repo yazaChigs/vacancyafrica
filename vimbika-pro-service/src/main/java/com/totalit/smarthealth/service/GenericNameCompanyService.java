@@ -14,7 +14,9 @@ import java.util.List;
  * @author roy
  * @param <T>
  */
-public interface GenericCompanyService <T extends Serializable> extends GenericService<T> {
-    public List<T> getByCompany(Company company);
+public interface GenericNameCompanyService <T extends Serializable> extends GenericService<T>{
+    public T getByNameAndCompany(String name, Company company);
     public Boolean checkDuplicate(T current, T old, Company company);
+    public List<T> getAll(Company company);
+    
 }

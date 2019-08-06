@@ -18,5 +18,10 @@ import org.springframework.data.repository.NoRepositoryBean;
  */
 @NoRepositoryBean
 public interface AbstractCompanyRepository <T , ID extends Serializable> extends AbstractRepo<T, ID>{
-    public List<T> findByActiveAndCompany(Boolean active, Company company); 
+    public List<T> findByActiveAndCompany(Boolean active, Company company);
+   // public List<T> findByActiveAndNameLikeAndCompany(Boolean active, String name, Company company);    
+   // public T findByActiveAndNameAndCompany(Boolean active, String name, Company company);    
+   // public List<T> findByActiveOrderByNameAscAndCompany(Boolean active, Company company);
+    //public List<T> findByActiveOrderByNameDescAndCompany(Boolean active, Company company);
+   // public Boolean existsByNameIgnoreCaseAndActiveAndCompany(String name, Boolean active, Company company);
 }

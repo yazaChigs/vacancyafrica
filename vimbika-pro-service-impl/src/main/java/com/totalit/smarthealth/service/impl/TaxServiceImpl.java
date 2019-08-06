@@ -5,9 +5,10 @@
  */
 package com.totalit.smarthealth.service.impl;
 
-import com.totalit.smarthealth.domain.Module;
-import com.totalit.smarthealth.repository.ModuleRepository;
-import com.totalit.smarthealth.service.ModuleService;
+import com.totalit.smarthealth.domain.Company;
+import com.totalit.smarthealth.domain.Tax;
+import com.totalit.smarthealth.repository.TaxRepository;
+import com.totalit.smarthealth.service.TaxService;
 import com.totalit.smarthealth.service.UserService;
 import com.totalit.smarthealth.util.AppUtil;
 import java.util.Date;
@@ -23,41 +24,58 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
-public class ModuleServiceImpl  implements ModuleService {
-
+public class TaxServiceImpl implements TaxService{
     @Autowired
-    private ModuleRepository repo;
+    private TaxRepository repo;
     @Resource
     private UserService userService;
-    
+
     @Override
-    public Module getByName(String name) {
-        return repo.findByActiveAndName(Boolean.TRUE, name);
+    public Tax getByNameAndCompany(String name, Company company) {
+       return repo.findByNameAndCompanyAndActive(name, company, Boolean.TRUE);
     }
 
     @Override
-    public List<Module> getAll() {
-        return repo.findByActive(Boolean.TRUE);
+    public Boolean checkDuplicate(Tax current, Tax old, Company company) {
+         if(current.getId() == null){
+        return repo.existsByNameIgnoreCaseAndActiveAndCompany(current.getName(), Boolean.TRUE, company);
+        }
+        old = get(current.getId());
+        if(!current.getName().equalsIgnoreCase(old.getName())){
+             return repo.existsByNameIgnoreCaseAndActiveAndCompany(current.getName(), Boolean.TRUE, company);
+        }else{
+           return Boolean.FALSE;
+        }
     }
 
     @Override
-    public Module get(String id) {
+    public List<Tax> getAll(Company company) {
+        return repo.findByCompanyAndActive(company, Boolean.TRUE);
+    }
+
+    @Override
+    public List<Tax> getAll() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Tax get(String id) {
         return repo.findById(id).get();
     }
 
     @Override
-    public void delete(Module t) {
+    public void delete(Tax t) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<Module> getPageable() {
+    public List<Tax> getPageable() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Module save(Module t) {
-          if (t.getId() == null) {
+    public Tax save(Tax t) {
+        if (t.getId() == null) {
            t.setCreatedBy(userService.getCurrentUser());
             t.setDateCreated(new Date());
             t.setUuid(AppUtil.generateUUID());
@@ -72,31 +90,22 @@ public class ModuleServiceImpl  implements ModuleService {
     }
 
     @Override
-    public Boolean checkDuplicate(Module current, Module old) {
-        if(current.getId() == null){
-        return repo.existsByNameIgnoreCaseAndActive(current.getName(), Boolean.TRUE);
-        }
-        old = get(current.getId());
-        if(current.getName().equalsIgnoreCase(old.getName())){
-            return Boolean.TRUE;
-        }else{
-            return repo.existsByNameIgnoreCaseAndActive(current.getName(), Boolean.TRUE);
-        }
-    }
-
-    @Override
-    public List<Module> findByActiveAndDateModified(Boolean active, Date date) {
+    public Boolean checkDuplicate(Tax current, Tax old) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<Module> findByActiveAndDateCreated(Boolean active, Date date) {
+    public List<Tax> findByActiveAndDateModified(Boolean active, Date date) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Module findByUuid(String uuid) {
+    public List<Tax> findByActiveAndDateCreated(Boolean active, Date date) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
+    @Override
+    public Tax findByUuid(String uuid) {
+        return repo.findByUuid(uuid);
+    }
 }

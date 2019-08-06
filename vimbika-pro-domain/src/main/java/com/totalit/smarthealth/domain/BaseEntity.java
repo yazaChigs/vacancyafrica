@@ -22,7 +22,7 @@ import org.springframework.format.annotation.DateTimeFormat;
  *
  * @author Roy
  */
-@Document
+//@Document
 @Getter @Setter @NoArgsConstructor
 abstract public class BaseEntity implements Serializable {
 

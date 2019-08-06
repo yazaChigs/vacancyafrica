@@ -7,6 +7,7 @@ package com.totalit.smarthealth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.totalit.smarthealth.domain.BaseName;
+import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.Module;
 import com.totalit.smarthealth.domain.Permission;
 import com.totalit.smarthealth.domain.UserRole;
@@ -16,6 +17,7 @@ import com.totalit.smarthealth.service.ModuleService;
 import com.totalit.smarthealth.service.PermissionService;
 import com.totalit.smarthealth.service.UserRoleService;
 import com.totalit.smarthealth.service.UserService;
+import com.totalit.smarthealth.util.EndPointUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import java.util.HashMap;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -53,13 +56,16 @@ public class BaseNameController {
     private PermissionService permissionService;
     @Autowired
     private UserRoleService roleService;
+//    @Autowired
+//    private UnitService unitService;
     
     @PostMapping("/save")
     @ApiOperation("Persists New Generic Name Object to Collection")
-    public ResponseEntity<Map<String, Object>> save(@RequestBody String item) {
+    public ResponseEntity<Map<String, Object>> save(@RequestHeader(value = "Company") String company, @RequestBody String item) {
         JSONObject jsonObj = new JSONObject(item);
         Map<String, Object> response = new HashMap<>();       
         ObjectMapper objectMapper = new ObjectMapper(); 
+        Company c = EndPointUtil.getCompany(company);
         String itemMessage = "";
         boolean exist = false;
         try {
@@ -94,6 +100,17 @@ public class BaseNameController {
                     exist = true;
                 }
             }
+//            else if(type.equalsIgnoreCase(BaseNameType.UNIT.toString())){
+//                Unit unit = objectMapper.readValue(item, Unit.class);
+//                if(!unitService.checkDuplicate(unit, unit, c)){
+//                    unit.setCompany(c);
+//                Unit r = unitService.save(unit);
+//                itemMessage = "Unit";
+//                response.put("item", r); 
+//                }else{
+//                    exist = true;
+//                }
+//            }
             
             
         } catch (Exception ex) {

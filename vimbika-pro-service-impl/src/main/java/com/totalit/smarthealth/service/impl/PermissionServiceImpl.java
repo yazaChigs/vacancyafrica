@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class PermissionServiceImpl implements PermissionService{
 
-     @Autowired
+    @Autowired
     private PermissionRepository repo;
     @Resource
     private UserService userService;

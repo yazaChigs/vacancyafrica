@@ -6,8 +6,10 @@
 package com.totalit.smarthealth.controller;
 
 
+import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.User;
 import com.totalit.smarthealth.service.UserService;
+import com.totalit.smarthealth.util.EndPointUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import java.util.HashMap;
@@ -35,11 +37,13 @@ public class UserResource  {
 
     @PostMapping("/save")
     @ApiOperation("Persists User object to the database")
-    public ResponseEntity<Map<String, Object>> saveUser(@RequestBody User user) {
+    public ResponseEntity<Map<String, Object>> saveUser(@RequestHeader(value = "Company") String company, @RequestBody User user) {
         Map<String, Object> response = new HashMap<>();
+        Company c = EndPointUtil.getCompany(company);
+        user.setCompany(c);
         boolean exist = false;
         try {
-              if(!userService.checkDuplicate(user, user)){
+              if(!userService.checkDuplicate(user, user, c)){
                 User u =  userService.save(user); 
                 response.put("item", u);
               }else{

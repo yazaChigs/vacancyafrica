@@ -3,15 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.totalit.smarthealth.domain.util;
+package com.totalit.smarthealth.service;
+
+import com.totalit.smarthealth.domain.Unit;
 
 /**
  *
  * @author roy
  */
-public enum BaseNameType {
-     MODULE,
-     ROLE,
-     PERMISSION,
-     UNIT,
+public interface UnitService extends GenericNameCompanyService<Unit>{
+    
 }

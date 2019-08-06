@@ -1,11 +1,8 @@
 package com.totalit.smarthealth.auth.jwt;
 
-import com.totalit.smarthealth.auth.jwt.AuthenticationException;
-import com.totalit.smarthealth.auth.jwt.JwtTokenUtil;
 import com.totalit.smarthealth.domain.User;
 import com.totalit.smarthealth.service.UserService;
 import java.util.Objects;
-import javax.annotation.Resource;
 
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;

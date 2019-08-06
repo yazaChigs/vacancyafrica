@@ -22,10 +22,10 @@ import com.totalit.smarthealth.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -40,9 +40,9 @@ public class UserDetailsServiceImpl implements org.springframework.security.core
 
     final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
-    @Resource
+    @Autowired
     private UserService userService;
-    @Resource
+    @Autowired
     HttpServletRequest request;
 
     @Override

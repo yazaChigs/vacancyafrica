@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
- * @author Judge Muzinda
+ * @author roy
  */
 @Service
 @Transactional
@@ -151,20 +151,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean checkDuplicate(User current, User old) {
+    public Boolean checkDuplicate(User current, User old, Company company) {
          if(current.getId() == null){
-        return userRepo.existsByActiveAndUserNameIgnoreCase(Boolean.TRUE, current.getUserName());
+        return userRepo.existsByActiveAndUserNameIgnoreCaseAndCompany(Boolean.TRUE, current.getUserName(), company);
         }
         old = get(current.getId());
         if(current.getUserName().equalsIgnoreCase(old.getUserName())){
             return Boolean.TRUE;
         }else{
-            return userRepo.existsByActiveAndUserNameIgnoreCase(Boolean.TRUE, current.getUserName());
-        }
+          return userRepo.existsByActiveAndUserNameIgnoreCaseAndCompany(Boolean.TRUE, current.getUserName(), company);        }
     }
 
     @Override
     public List<User> getByCompany(Company company) {
         return userRepo.findByActiveAndCompany(Boolean.TRUE, company);
+    }
+
+    @Override
+    public Boolean checkDuplicate(User current, User old) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
