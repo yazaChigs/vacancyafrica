@@ -79,6 +79,8 @@ public class CustomerController {
         Company c = EndPointUtil.getCompany(company);
         return new ResponseEntity<>(service.getByCompany(c), HttpStatus.OK);
     }
+    
+    
     @GetMapping("/get-item/{id}")
     @ApiOperation(value = "Returns Customer of Id passed as parameter", response = Customer.class)
     public ResponseEntity<Customer> getItem(@ApiParam(name = "id", value = "Id used to fetch the object") @PathVariable("id") String id) {

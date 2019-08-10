@@ -9,10 +9,7 @@ package com.totalit.smarthealth.domain.util;
  *
  * @author roy
  */
-public enum BaseNameType {
-     MODULE,
-     ROLE,
-     PERMISSION,
-     UNIT,
-     CATEGORY
+public enum TaxType {
+    INCLUSIVE,
+    EXCLUSIVE
 }

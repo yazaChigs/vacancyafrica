@@ -72,7 +72,8 @@ UserRole role = new UserRole();
         user.setFirstName("Shepherd");
         user.setLastName("Chikomo");
         user.setActive(Boolean.TRUE);
-        user.setAddress("17057 Zengeza 4 Chitungwiza");
+        //user.setAddress("17057 Zengeza 4 Chitungwiza");
+        
         user.setUserName("shepherd@totalit.org");
         user.setPassword("Pass1234");
         user.setUserRoles(roles);

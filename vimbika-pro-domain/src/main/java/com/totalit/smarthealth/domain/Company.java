@@ -31,7 +31,10 @@ public class Company  extends BaseEntity{
     private String officePhone;
     private String email;
     private String fax;
-    private String address;
+    private String street;
+    private String city;
+    private String stateProvince;
+    private String postalCode;
     private String country;
     private String website;
     private String logo;

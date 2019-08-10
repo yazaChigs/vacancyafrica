@@ -72,10 +72,10 @@ public class CompanyServiceImpl implements CompanyService{
         return repo.existsByNameIgnoreCaseAndActive(current.getName(), Boolean.TRUE);
         }
         old = get(current.getId());
-        if(current.getName().equalsIgnoreCase(old.getName())){
-            return Boolean.TRUE;
-        }else{
+        if(!current.getName().equalsIgnoreCase(old.getName())){
             return repo.existsByNameIgnoreCaseAndActive(current.getName(), Boolean.TRUE);
+        }else{
+             return Boolean.FALSE;
         }
     }
 

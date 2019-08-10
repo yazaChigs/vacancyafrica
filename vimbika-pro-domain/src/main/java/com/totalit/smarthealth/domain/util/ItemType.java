@@ -9,10 +9,8 @@ package com.totalit.smarthealth.domain.util;
  *
  * @author roy
  */
-public enum BaseNameType {
-     MODULE,
-     ROLE,
-     PERMISSION,
-     UNIT,
-     CATEGORY
+public enum ItemType {
+   INVENTORY, // PRODUCTS TO TRACK QUANTITIES
+   NON_INVENTORY,  //PRODUCTS WHICH DO NOT NEED TRACKING OF QUANTITIES 
+   SERVICE, // SERVICES PROVIDED TO CUSTOMERS
 }

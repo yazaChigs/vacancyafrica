@@ -33,7 +33,10 @@ public class User extends BaseCompany {
     private Gender gender;
     private String mobilePhone;
     private String officePhone;
-    private String address;
+    private String street;
+    private String city;
+    private String stateProvince;
+    private String postalCode;
     private String country;
     private String image;
     private String resetToken;  

@@ -5,10 +5,10 @@
  */
 package com.totalit.smarthealth.service.impl;
 
+import com.totalit.smarthealth.domain.Category;
 import com.totalit.smarthealth.domain.Company;
-import com.totalit.smarthealth.domain.Unit;
-import com.totalit.smarthealth.repository.UnitRepository;
-import com.totalit.smarthealth.service.UnitService;
+import com.totalit.smarthealth.repository.CategoryRepository;
+import com.totalit.smarthealth.service.CategoryService;
 import com.totalit.smarthealth.service.UserService;
 import com.totalit.smarthealth.util.AppUtil;
 import java.util.Date;
@@ -24,20 +24,20 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
-public class UnitServiceImpl implements UnitService{
+public class CategoryServiceImpl implements CategoryService{
     @Autowired
-    private UnitRepository repo;
+    private CategoryRepository repo;
     @Resource
     private UserService userService;
 
     @Override
-    public Unit getByNameAndCompany(String name, Company company) {
-                return repo.findByNameAndCompanyAndActive(name, company, Boolean.TRUE);
+    public Category getByNameAndCompany(String name, Company company) {
+        return repo.findByNameAndCompanyAndActive(name, company, Boolean.TRUE);
     }
 
     @Override
-    public Boolean checkDuplicate(Unit current, Unit old, Company company) {
-         if(current.getId() == null){
+    public Boolean checkDuplicate(Category current, Category old, Company company) {
+        if(current.getId() == null){
         return repo.existsByNameIgnoreCaseAndActiveAndCompany(current.getName(), Boolean.TRUE, company);
         }
         old = get(current.getId());
@@ -49,32 +49,32 @@ public class UnitServiceImpl implements UnitService{
     }
 
     @Override
-    public List<Unit> getAll(Company company) {
-        return repo.findByCompanyAndActive(company, Boolean.TRUE);
+    public List<Category> getAll(Company company) {
+         return repo.findByCompanyAndActive(company, Boolean.TRUE);
     }
 
     @Override
-    public List<Unit> getAll() {
+    public List<Category> getAll() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Unit get(String id) {
+    public Category get(String id) {
         return repo.findById(id).get();
     }
 
     @Override
-    public void delete(Unit t) {
+    public void delete(Category t) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<Unit> getPageable() {
+    public List<Category> getPageable() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Unit save(Unit t) {
+    public Category save(Category t) {
         if (t.getId() == null) {
            t.setCreatedBy(userService.getCurrentUser());
             t.setDateCreated(new Date());
@@ -90,22 +90,22 @@ public class UnitServiceImpl implements UnitService{
     }
 
     @Override
-    public Boolean checkDuplicate(Unit current, Unit old) {
+    public Boolean checkDuplicate(Category current, Category old) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<Unit> findByActiveAndDateModified(Boolean active, Date date) {
+    public List<Category> findByActiveAndDateModified(Boolean active, Date date) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<Unit> findByActiveAndDateCreated(Boolean active, Date date) {
+    public List<Category> findByActiveAndDateCreated(Boolean active, Date date) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Unit findByUuid(String uuid) {
-         return repo.findByUuid(uuid);
+    public Category findByUuid(String uuid) {
+        return repo.findByUuid(uuid);
     }
 }

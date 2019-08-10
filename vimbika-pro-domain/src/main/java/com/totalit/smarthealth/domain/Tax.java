@@ -19,5 +19,5 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @TypeAlias("tax")
 @Getter @Setter @NoArgsConstructor
 public class Tax extends BaseNameCompany{
-    
+    private Double taxPercentage;
 }

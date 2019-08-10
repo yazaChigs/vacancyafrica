@@ -6,14 +6,16 @@
 package com.totalit.smarthealth.service.impl;
 
 import com.totalit.smarthealth.domain.Company;
-import com.totalit.smarthealth.domain.Unit;
-import com.totalit.smarthealth.repository.UnitRepository;
-import com.totalit.smarthealth.service.UnitService;
+import com.totalit.smarthealth.domain.InventoryItem;
+import com.totalit.smarthealth.repository.InventoryItemRepository;
+import com.totalit.smarthealth.service.InventoryItemService;
 import com.totalit.smarthealth.service.UserService;
 import com.totalit.smarthealth.util.AppUtil;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,20 +26,22 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
-public class UnitServiceImpl implements UnitService{
-    @Autowired
-    private UnitRepository repo;
-    @Resource
-    private UserService userService;
+public class InventoryItemServiceImpl implements InventoryItemService{
 
+     final Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
+    @Autowired
+    private InventoryItemRepository repo;
+    
+     @Resource
+    private UserService userService;
     @Override
-    public Unit getByNameAndCompany(String name, Company company) {
-                return repo.findByNameAndCompanyAndActive(name, company, Boolean.TRUE);
+    public List<InventoryItem> getByCompany(Company company) {
+       return repo.findByActiveAndCompany(Boolean.TRUE, company);
     }
 
     @Override
-    public Boolean checkDuplicate(Unit current, Unit old, Company company) {
-         if(current.getId() == null){
+    public Boolean checkDuplicate(InventoryItem current, InventoryItem old, Company company) {
+        if(current.getId() == null){
         return repo.existsByNameIgnoreCaseAndActiveAndCompany(current.getName(), Boolean.TRUE, company);
         }
         old = get(current.getId());
@@ -49,39 +53,34 @@ public class UnitServiceImpl implements UnitService{
     }
 
     @Override
-    public List<Unit> getAll(Company company) {
-        return repo.findByCompanyAndActive(company, Boolean.TRUE);
-    }
-
-    @Override
-    public List<Unit> getAll() {
+    public List<InventoryItem> getAll() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Unit get(String id) {
+    public InventoryItem get(String id) {
         return repo.findById(id).get();
     }
 
     @Override
-    public void delete(Unit t) {
+    public void delete(InventoryItem t) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<Unit> getPageable() {
+    public List<InventoryItem> getPageable() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Unit save(Unit t) {
-        if (t.getId() == null) {
+    public InventoryItem save(InventoryItem t) {
+         if (t.getId() == null) {
            t.setCreatedBy(userService.getCurrentUser());
             t.setDateCreated(new Date());
             t.setUuid(AppUtil.generateUUID());
             return repo.save(t);
         }
-           if(t.getCreatedById()!=null){
+         if(t.getCreatedById()!=null){
                t.setCreatedBy(userService.get(t.getCreatedById()));
            }
         t.setModifiedBy(userService.getCurrentUser());
@@ -90,22 +89,23 @@ public class UnitServiceImpl implements UnitService{
     }
 
     @Override
-    public Boolean checkDuplicate(Unit current, Unit old) {
+    public Boolean checkDuplicate(InventoryItem current, InventoryItem old) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<Unit> findByActiveAndDateModified(Boolean active, Date date) {
+    public List<InventoryItem> findByActiveAndDateModified(Boolean active, Date date) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<Unit> findByActiveAndDateCreated(Boolean active, Date date) {
+    public List<InventoryItem> findByActiveAndDateCreated(Boolean active, Date date) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Unit findByUuid(String uuid) {
+    public InventoryItem findByUuid(String uuid) {
          return repo.findByUuid(uuid);
     }
+    
 }

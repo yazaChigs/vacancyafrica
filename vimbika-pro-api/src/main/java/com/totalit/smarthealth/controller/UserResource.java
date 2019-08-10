@@ -6,6 +6,7 @@
 package com.totalit.smarthealth.controller;
 
 
+
 import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.User;
 import com.totalit.smarthealth.service.UserService;
@@ -62,6 +63,18 @@ public class UserResource  {
         response.put("message", "User Saved Successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+     @GetMapping("/get-all")
+    @ApiOperation("Returns All Users")
+    public ResponseEntity<?> getAll(@RequestHeader(value = "Company") String company) {
+        logger.info("Retrieving All Users By Company{}");
+        Company c = EndPointUtil.getCompany(company);
+        return new ResponseEntity<>(userService.getByCompany(c), HttpStatus.OK);
+    }
+     @GetMapping("/get-item/{id}")
+    @ApiOperation(value = "Returns User of Id passed as parameter", response = User.class)
+    public ResponseEntity<User> getItem(@ApiParam(name = "id", value = "Id used to fetch the object") @PathVariable("id") String id) {
+        return new ResponseEntity<>(userService.get(id), HttpStatus.OK);
+    }
 
     @PostMapping("/change-password")
     @ApiOperation("Change User Password")
@@ -101,21 +114,41 @@ public class UserResource  {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete")
-    @ApiOperation("Deactivate User Account")
-    public ResponseEntity<Map<String, Object>> deactivateUser(@ApiParam(name = "id", value = "Id of object to be deleted") @RequestParam("id") String id) {
-        logger.info("Deactivating User Account");
+//    @DeleteMapping("/delete")
+//    @ApiOperation("Deactivate User Account")
+//    public ResponseEntity<Map<String, Object>> deactivateUser(@ApiParam(name = "id", value = "Id of object to be deleted") @RequestParam("id") String id) {
+//        logger.info("Deactivating User Account");
+//        Map<String, Object> response = new HashMap<>();
+//        try {
+//            userService.delete(userService.get(id));
+//            
+//        } catch (Exception ex) {
+//            response.put("message", "System error occurred deleting item");
+//            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//        response.put("message", "User Account Deactivated");
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
+
+    @DeleteMapping("/delete/{id}")
+    @ApiOperation("Set Inactive to User Object")
+    public ResponseEntity<Map<String, Object>> delete(@ApiParam(name = "id", value = "id for object to be deleted") @PathVariable("id") String id) {
+        logger.info("Set Inactive on User Object");
         Map<String, Object> response = new HashMap<>();
+        String itemMessage = "";
         try {
-            userService.delete(userService.get(id));
-            
+          User user = userService.get(id);
+          user.setActive(Boolean.FALSE);
+          user.setDeleted(Boolean.TRUE);
+          userService.save(user);
+           
         } catch (Exception ex) {
-            response.put("message", "System error occurred deleting item");
+            response.put("message", ex.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        response.put("message", "User Account Deactivated");
+        itemMessage = itemMessage + " Deleted Successfully"; 
+        response.put("message", itemMessage);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-   
+    
 }

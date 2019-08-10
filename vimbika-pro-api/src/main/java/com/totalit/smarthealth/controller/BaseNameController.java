@@ -7,14 +7,20 @@ package com.totalit.smarthealth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.totalit.smarthealth.domain.BaseName;
+import com.totalit.smarthealth.domain.BaseNameCompany;
+import com.totalit.smarthealth.domain.Category;
 import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.Module;
 import com.totalit.smarthealth.domain.Permission;
+import com.totalit.smarthealth.domain.Unit;
 import com.totalit.smarthealth.domain.UserRole;
 import com.totalit.smarthealth.domain.util.BaseNameType;
+import com.totalit.smarthealth.service.CategoryService;
+import com.totalit.smarthealth.service.GenericNameCompanyService;
 import com.totalit.smarthealth.service.GenericNameService;
 import com.totalit.smarthealth.service.ModuleService;
 import com.totalit.smarthealth.service.PermissionService;
+import com.totalit.smarthealth.service.UnitService;
 import com.totalit.smarthealth.service.UserRoleService;
 import com.totalit.smarthealth.service.UserService;
 import com.totalit.smarthealth.util.EndPointUtil;
@@ -56,8 +62,10 @@ public class BaseNameController {
     private PermissionService permissionService;
     @Autowired
     private UserRoleService roleService;
-//    @Autowired
-//    private UnitService unitService;
+    @Autowired
+    private UnitService unitService;
+    @Autowired
+    private CategoryService categoryService;
     
     @PostMapping("/save")
     @ApiOperation("Persists New Generic Name Object to Collection")
@@ -100,17 +108,28 @@ public class BaseNameController {
                     exist = true;
                 }
             }
-//            else if(type.equalsIgnoreCase(BaseNameType.UNIT.toString())){
-//                Unit unit = objectMapper.readValue(item, Unit.class);
-//                if(!unitService.checkDuplicate(unit, unit, c)){
-//                    unit.setCompany(c);
-//                Unit r = unitService.save(unit);
-//                itemMessage = "Unit";
-//                response.put("item", r); 
-//                }else{
-//                    exist = true;
-//                }
-//            }
+            else if(type.equalsIgnoreCase(BaseNameType.UNIT.toString())){
+                Unit unit = objectMapper.readValue(item, Unit.class);
+                if(!unitService.checkDuplicate(unit, unit, c)){
+                    unit.setCompany(c);
+                Unit r = unitService.save(unit);
+                itemMessage = "Unit";
+                response.put("item", r); 
+                }else{
+                    exist = true;
+                }
+            }
+            else if(type.equalsIgnoreCase(BaseNameType.CATEGORY.toString())){
+                Category category = objectMapper.readValue(item, Category.class);
+                if(!categoryService.checkDuplicate(category, category, c)){
+                    category.setCompany(c);
+                Category r = categoryService.save(category);
+                itemMessage = "Category";
+                response.put("item", r); 
+                }else{
+                    exist = true;
+                }
+            }
             
             
         } catch (Exception ex) {
@@ -130,8 +149,10 @@ public class BaseNameController {
     
     @GetMapping("/get-all/{type}")
     @ApiOperation(value = "Returns BaseName of Type passed as parameter", response = BaseName.class)
-    public ResponseEntity<Map<String, Object>>  getAll(@ApiParam(name = "type", value = "type used to fetch the objects") @PathVariable("type") String type) {
+    public ResponseEntity<Map<String, Object>>  getAll(@RequestHeader(value = "Company") String company,
+            @ApiParam(name = "type", value = "type used to fetch the objects") @PathVariable("type") String type) {
         Map<String, Object> response = new HashMap<>();  
+        Company c = EndPointUtil.getCompany(company);
         if(type.equalsIgnoreCase(BaseNameType.MODULE.toString())){
             List<Module> list = moduleService.getAll();            
             response.put("list", list);
@@ -139,6 +160,16 @@ public class BaseNameController {
         }
         else if(type.equalsIgnoreCase(BaseNameType.ROLE.toString())){
            List<UserRole> list = roleService.getAll();            
+           response.put("list", list);
+           return new ResponseEntity<>(response, HttpStatus.OK); 
+        }
+        else if(type.equalsIgnoreCase(BaseNameType.UNIT.toString())){
+           List<Unit> list = unitService.getAll(c);            
+           response.put("list", list);
+           return new ResponseEntity<>(response, HttpStatus.OK); 
+        }
+        else if(type.equalsIgnoreCase(BaseNameType.CATEGORY.toString())){
+           List<Category> list = categoryService.getAll(c);            
            response.put("list", list);
            return new ResponseEntity<>(response, HttpStatus.OK); 
         }
@@ -165,6 +196,14 @@ public class BaseNameController {
                delete(roleService, id);
                itemMessage = "Role";
            }
+           else if(type.equalsIgnoreCase(BaseNameType.UNIT.toString())){
+               delete(unitService, id);
+               itemMessage = "Unit";
+           }
+           else if(type.equalsIgnoreCase(BaseNameType.CATEGORY.toString())){
+               delete(categoryService, id);
+               itemMessage = "Category";
+           }
             
         } catch (Exception ex) {
             response.put("message", ex.getMessage());
@@ -176,6 +215,12 @@ public class BaseNameController {
     }
     
     public <T extends GenericNameService<S>, S extends BaseName> void delete(T service, String id) throws Exception{       
+         S s = service.get(id);
+         s.setActive(Boolean.FALSE);
+         s.setDeleted(Boolean.TRUE);
+         service.save(s);
+    }
+    public <T extends GenericNameCompanyService<S>, S extends BaseNameCompany> void delete(T service, String id) throws Exception{       
          S s = service.get(id);
          s.setActive(Boolean.FALSE);
          s.setDeleted(Boolean.TRUE);

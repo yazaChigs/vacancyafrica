@@ -5,11 +5,12 @@
  */
 package com.totalit.smarthealth.controller;
 
-import static com.totalit.smarthealth.controller.CompanyController.logger;
 import com.totalit.smarthealth.domain.Company;
-import com.totalit.smarthealth.domain.Company;
+import com.totalit.smarthealth.domain.InventoryItem;
 import com.totalit.smarthealth.service.CompanyService;
+import com.totalit.smarthealth.service.InventoryItemService;
 import com.totalit.smarthealth.service.UserService;
+import com.totalit.smarthealth.util.EndPointUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,24 +36,27 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
-@RequestMapping("/api/company")
-public class CompanyController {
-    
-    public static final Logger logger = LoggerFactory.getLogger(CompanyController.class);
+@RequestMapping("/api/inventory")
+public class InventoryItemController {
+    public static final Logger logger = LoggerFactory.getLogger(InventoryItemController.class);
     @Autowired
     private UserService userService;
     @Autowired
-    private CompanyService service;
+    private InventoryItemService service;
+    @Autowired
+    private CompanyService companyService;
     
-    @PostMapping("/save")
-    @ApiOperation("Persists Company to Collection")
-    public ResponseEntity<Map<String, Object>> save(@RequestBody Company company) {
+    @PostMapping("/item/save")
+    @ApiOperation("Persists InventoryItem to Collection")
+    public ResponseEntity<Map<String, Object>> save(@RequestHeader(value = "Company") String company, @RequestBody InventoryItem inventoryItem) {
         Map<String, Object> response = new HashMap<>();
+        Company c = EndPointUtil.getCompany(company);
+        inventoryItem.setCompany(c);
         boolean exist = false;
         try{
-        if (!service.checkDuplicate(company, company)) {
-            Company c = service.save(company);
-            response.put("item", c);
+        if (!service.checkDuplicate(inventoryItem, inventoryItem, c)) {
+            InventoryItem s = service.save(inventoryItem);
+            response.put("item", s);
         } else {
             exist = true;
         }
@@ -64,32 +69,33 @@ public class CompanyController {
             response.put("duplicate", true);
             return new ResponseEntity<>(response, HttpStatus.OK); 
         } 
-        response.put("message", "Company Saved Successfully");
+        response.put("message", "InventoryItem Saved Successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @GetMapping("/get-all")
-    @ApiOperation("Returns All Companies")
-    public ResponseEntity<?> getAllCompanies() {
-        logger.info("Retrieving All Companies{}");
-        return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
+    @GetMapping("/items/get-all")
+    @ApiOperation("Returns All InventoryItems")
+    public ResponseEntity<?> getAll(@RequestHeader(value = "Company") String company) {
+        logger.info("Retrieving All InventoryItems By Company{}");
+        Company c = EndPointUtil.getCompany(company);
+        return new ResponseEntity<>(service.getByCompany(c), HttpStatus.OK);
     }
-     @GetMapping("/get-item/{id}")
-    @ApiOperation(value = "Returns Company of Id passed as parameter", response = Company.class)
-    public ResponseEntity<Company> getItem(@ApiParam(name = "id", value = "Id used to fetch the object") @PathVariable("id") String id) {
+    @GetMapping("/item/get-item/{id}")
+    @ApiOperation(value = "Returns InventoryItem of Id passed as parameter", response = InventoryItem.class)
+    public ResponseEntity<InventoryItem> getItem(@ApiParam(name = "id", value = "Id used to fetch the object") @PathVariable("id") String id) {
         return new ResponseEntity<>(service.get(id), HttpStatus.OK);
     }
     
-    @DeleteMapping("/delete/{id}")
-    @ApiOperation("Set Inactive to Company Object")
+    @DeleteMapping("/item/delete/{id}")
+    @ApiOperation("Set Inactive to InventoryItem Object")
     public ResponseEntity<Map<String, Object>> delete(@ApiParam(name = "id", value = "id for object to be deleted") @PathVariable("id") String id) {
-        logger.info("Set Inactive on Company Object");
+        logger.info("Set Inactive on InventoryItem Object");
         Map<String, Object> response = new HashMap<>();
         String itemMessage = "";
         try {
-          Company company = service.get(id);
-          company.setActive(Boolean.FALSE);
-          company.setDeleted(Boolean.TRUE);
-          service.save(company);
+          InventoryItem inventoryItem = service.get(id);
+          inventoryItem.setActive(Boolean.FALSE);
+          inventoryItem.setDeleted(Boolean.TRUE);
+          service.save(inventoryItem);
            
         } catch (Exception ex) {
             response.put("message", ex.getMessage());
