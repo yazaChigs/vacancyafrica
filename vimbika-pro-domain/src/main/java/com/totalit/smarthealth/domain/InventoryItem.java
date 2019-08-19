@@ -5,6 +5,7 @@
  */
 package com.totalit.smarthealth.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.totalit.smarthealth.domain.util.ItemType;
 import com.totalit.smarthealth.domain.util.TaxType;
 import lombok.Getter;
@@ -24,10 +25,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class InventoryItem extends BaseCompany{
     private String name;
     private String description;
+    @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
     @DBRef
     private Category category;
+    @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
     @DBRef
     private Unit unit;
+    @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
     @DBRef
     private Tax tax;
     private Long alertQuantity;

@@ -40,6 +40,7 @@ public class VimbikaPro  extends SpringBootServletInitializer implements Command
     private UserService userService;
    
      public static void main(String[] args) {
+        System.out.println("Current Directory = " + System.getProperty("user.dir"));
         SpringApplication.run(VimbikaPro.class, args);
     }
     
