@@ -3,17 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.totalit.smarthealth.domain.util;
+package com.totalit.smarthealth.service;
+
+import com.totalit.smarthealth.domain.PaymentType;
 
 /**
  *
  * @author roy
  */
-public enum BaseNameType {
-     MODULE,
-     ROLE,
-     PERMISSION,
-     UNIT,
-     CATEGORY,
-     PAYMENT_TYPE
+public interface PaymentTypeService extends GenericNameCompanyService<PaymentType>{
+    
 }

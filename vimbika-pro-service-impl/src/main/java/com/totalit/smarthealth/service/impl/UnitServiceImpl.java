@@ -32,7 +32,7 @@ public class UnitServiceImpl implements UnitService{
 
     @Override
     public Unit getByNameAndCompany(String name, Company company) {
-                return repo.findByNameAndCompanyAndActive(name, company, Boolean.TRUE);
+                return repo.findByNameIgnoreCaseAndCompanyAndActive(name, company, Boolean.TRUE);
     }
 
     @Override

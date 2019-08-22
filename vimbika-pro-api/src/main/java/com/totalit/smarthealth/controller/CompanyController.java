@@ -7,7 +7,6 @@ package com.totalit.smarthealth.controller;
 
 import static com.totalit.smarthealth.controller.CompanyController.logger;
 import com.totalit.smarthealth.domain.Company;
-import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.service.CompanyService;
 import com.totalit.smarthealth.service.UserService;
 import io.swagger.annotations.ApiOperation;

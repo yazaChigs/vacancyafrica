@@ -6,9 +6,9 @@
 package com.totalit.smarthealth.service.impl;
 
 import com.totalit.smarthealth.domain.Company;
-import com.totalit.smarthealth.domain.Tax;
-import com.totalit.smarthealth.repository.TaxRepository;
-import com.totalit.smarthealth.service.TaxService;
+import com.totalit.smarthealth.domain.PaymentType;
+import com.totalit.smarthealth.repository.PaymentTypeRepositiory;
+import com.totalit.smarthealth.service.PaymentTypeService;
 import com.totalit.smarthealth.service.UserService;
 import com.totalit.smarthealth.util.AppUtil;
 import java.util.Date;
@@ -24,19 +24,20 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
-public class TaxServiceImpl implements TaxService{
+public class PaymentTypeServiceImpl implements PaymentTypeService{
     @Autowired
-    private TaxRepository repo;
+    private PaymentTypeRepositiory repo;
     @Resource
     private UserService userService;
-
+    
+    
     @Override
-    public Tax getByNameAndCompany(String name, Company company) {
-       return repo.findByNameIgnoreCaseAndCompanyAndActive(name, company, Boolean.TRUE);
+    public PaymentType getByNameAndCompany(String name, Company company) {
+                return repo.findByNameIgnoreCaseAndCompanyAndActive(name, company, Boolean.TRUE);
     }
 
     @Override
-    public Boolean checkDuplicate(Tax current, Tax old, Company company) {
+    public Boolean checkDuplicate(PaymentType current, PaymentType old, Company company) {
          if(current.getId() == null){
         return repo.existsByNameIgnoreCaseAndActiveAndCompany(current.getName(), Boolean.TRUE, company);
         }
@@ -49,32 +50,32 @@ public class TaxServiceImpl implements TaxService{
     }
 
     @Override
-    public List<Tax> getAll(Company company) {
+    public List<PaymentType> getAll(Company company) {
         return repo.findByCompanyAndActive(company, Boolean.TRUE);
     }
 
     @Override
-    public List<Tax> getAll() {
+    public List<PaymentType> getAll() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Tax get(String id) {
+    public PaymentType get(String id) {
         return repo.findById(id).get();
     }
 
     @Override
-    public void delete(Tax t) {
+    public void delete(PaymentType t) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<Tax> getPageable() {
+    public List<PaymentType> getPageable() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Tax save(Tax t) {
+    public PaymentType save(PaymentType t) {
         if (t.getId() == null) {
            t.setCreatedBy(userService.getCurrentUser());
             t.setDateCreated(new Date());
@@ -90,22 +91,22 @@ public class TaxServiceImpl implements TaxService{
     }
 
     @Override
-    public Boolean checkDuplicate(Tax current, Tax old) {
+    public Boolean checkDuplicate(PaymentType current, PaymentType old) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<Tax> findByActiveAndDateModified(Boolean active, Date date) {
+    public List<PaymentType> findByActiveAndDateModified(Boolean active, Date date) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<Tax> findByActiveAndDateCreated(Boolean active, Date date) {
+    public List<PaymentType> findByActiveAndDateCreated(Boolean active, Date date) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Tax findByUuid(String uuid) {
-        return repo.findByUuid(uuid);
+    public PaymentType findByUuid(String uuid) {
+         return repo.findByUuid(uuid);
     }
 }

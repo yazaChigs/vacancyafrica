@@ -20,7 +20,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 public interface AbstractNameCompanyRepository <T , ID extends Serializable> extends AbstractRepo<T, ID>{
     public List<T> findByCompanyAndActive(Company company, Boolean active);
     public List<T> findByNameLikeAndCompanyAndActive(String name, Boolean active);    
-    public T findByNameAndCompanyAndActive(String name, Company company, Boolean active);    
+    public T findByNameIgnoreCaseAndCompanyAndActive(String name, Company company, Boolean active);    
     public List<T> findByCompanyAndActiveOrderByNameAsc(Company company, Boolean active);
     public Boolean existsByNameIgnoreCaseAndActiveAndCompany(String name, Boolean active, Company company);
 }

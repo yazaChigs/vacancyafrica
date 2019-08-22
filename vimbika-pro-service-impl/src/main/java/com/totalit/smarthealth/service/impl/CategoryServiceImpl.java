@@ -32,7 +32,7 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public Category getByNameAndCompany(String name, Company company) {
-        return repo.findByNameAndCompanyAndActive(name, company, Boolean.TRUE);
+        return repo.findByNameIgnoreCaseAndCompanyAndActive(name, company, Boolean.TRUE);
     }
 
     @Override

@@ -11,14 +11,17 @@ import com.totalit.smarthealth.domain.BaseNameCompany;
 import com.totalit.smarthealth.domain.Category;
 import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.Module;
+import com.totalit.smarthealth.domain.PaymentType;
 import com.totalit.smarthealth.domain.Permission;
 import com.totalit.smarthealth.domain.Unit;
 import com.totalit.smarthealth.domain.UserRole;
 import com.totalit.smarthealth.domain.util.BaseNameType;
+import com.totalit.smarthealth.exceptions.InvalidParameterPassedException;
 import com.totalit.smarthealth.service.CategoryService;
 import com.totalit.smarthealth.service.GenericNameCompanyService;
 import com.totalit.smarthealth.service.GenericNameService;
 import com.totalit.smarthealth.service.ModuleService;
+import com.totalit.smarthealth.service.PaymentTypeService;
 import com.totalit.smarthealth.service.PermissionService;
 import com.totalit.smarthealth.service.UnitService;
 import com.totalit.smarthealth.service.UserRoleService;
@@ -66,6 +69,8 @@ public class BaseNameController {
     private UnitService unitService;
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private PaymentTypeService paymentTypeService;
     
     @PostMapping("/save")
     @ApiOperation("Persists New Generic Name Object to Collection")
@@ -130,6 +135,17 @@ public class BaseNameController {
                     exist = true;
                 }
             }
+             else if(type.equalsIgnoreCase(BaseNameType.PAYMENT_TYPE.toString())){
+                PaymentType paymentType = objectMapper.readValue(item, PaymentType.class);
+                if(!paymentTypeService.checkDuplicate(paymentType, paymentType, c)){
+                    paymentType.setCompany(c);
+                PaymentType r = paymentTypeService.save(paymentType);
+                itemMessage = "Payment Type";
+                response.put("item", r); 
+                }else{
+                    exist = true;
+                }
+            }
             
             
         } catch (Exception ex) {
@@ -173,6 +189,11 @@ public class BaseNameController {
            response.put("list", list);
            return new ResponseEntity<>(response, HttpStatus.OK); 
         }
+        else if(type.equalsIgnoreCase(BaseNameType.PAYMENT_TYPE.toString())){
+           List<PaymentType> list = paymentTypeService.getAll(c);            
+           response.put("list", list);
+           return new ResponseEntity<>(response, HttpStatus.OK); 
+        }
         response.put("message", "Incorrect Parameter (type) Passed");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -204,6 +225,10 @@ public class BaseNameController {
                delete(categoryService, id);
                itemMessage = "Category";
            }
+           else if(type.equalsIgnoreCase(BaseNameType.PAYMENT_TYPE.toString())){
+               delete(paymentTypeService, id);
+               itemMessage = "Payment Type";
+           }
             
         } catch (Exception ex) {
             response.put("message", ex.getMessage());
@@ -213,7 +238,21 @@ public class BaseNameController {
         response.put("message", itemMessage);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    
+    @GetMapping("/getByName/{type}/{name}")
+    @ApiOperation("Get BaseName Object")
+    public ResponseEntity<?> getByName(@RequestHeader(value = "Company") String company,
+            @ApiParam(name = "type", value = "type used to fetch the objects") @PathVariable("type") String type,
+            @ApiParam(name = "name", value = "name for object to be retrieved") @PathVariable("name") String name) {
+        Company c = EndPointUtil.getCompany(company);
+         if(type.equalsIgnoreCase(BaseNameType.PAYMENT_TYPE.toString())){
+               PaymentType paymentType = paymentTypeService.getByNameAndCompany(name, c);
+               return new ResponseEntity<>(paymentType, HttpStatus.OK);
+           }
+         else{
+             throw new InvalidParameterPassedException(type);
+         }
+        
+    }
     public <T extends GenericNameService<S>, S extends BaseName> void delete(T service, String id) throws Exception{       
          S s = service.get(id);
          s.setActive(Boolean.FALSE);
