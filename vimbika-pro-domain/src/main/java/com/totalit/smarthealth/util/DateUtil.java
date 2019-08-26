@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,6 +38,7 @@ public class DateUtil {
     public static final SimpleDateFormat restFmt = new SimpleDateFormat("dd/MM/yyyy");
     public static final SimpleDateFormat apiFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     public static final SimpleDateFormat timeFmt = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    public static final DateTimeFormatter angularFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     public static final SimpleDateFormat periodFriendly = new SimpleDateFormat("MMM yy");
 
     private DateUtil() {
@@ -49,6 +52,9 @@ public class DateUtil {
             System.out.println("Error occurred");
         }
         throw new IllegalArgumentException("Un expected parameter provided :" + date);
+    }
+    public static LocalDateTime getLocalDateTimeFromString(String date) {
+        return LocalDateTime.parse(date, angularFormat);
     }
 
     public static Date getDateFromStringRest(String date) {

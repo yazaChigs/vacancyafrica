@@ -44,7 +44,7 @@ public class UserResource  {
         user.setCompany(c);
         boolean exist = false;
         try {
-              if(!userService.checkDuplicate(user, user, c)){
+              if(!userService.checkDuplicate(user, user)){
                 User u =  userService.save(user); 
                 response.put("item", u);
               }else{

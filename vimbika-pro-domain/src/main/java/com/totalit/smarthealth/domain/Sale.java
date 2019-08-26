@@ -6,11 +6,14 @@
 package com.totalit.smarthealth.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.totalit.smarthealth.domain.util.ItemType;
-import com.totalit.smarthealth.domain.util.TaxType;
+import com.totalit.smarthealth.domain.util.SaleStatus;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -19,37 +22,27 @@ import org.springframework.data.mongodb.core.mapping.Document;
  *
  * @author roy
  */
-@Document(collection="inventory_items")
-@TypeAlias("inventoryitem")
+@Document(collection="sales")
+@TypeAlias("sale")
 @Getter @Setter @NoArgsConstructor
-public class InventoryItem extends BaseCompany{
-    private String name;
-    private String description;
+public class Sale extends BaseCompany{
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
     @DBRef
-    private Category category;
+    private Customer customer;
+    private Boolean isWalkInCustomer;
+    private LocalDateTime timeIniated;
+    @Transient
+    private String timeInit;
+    private SaleStatus saleStatus;
+    private String referenceNumber;
+    private Long totalQuantity;
+    private Double totalDiscount;
+    private Double amountBeforeDiscount;
+    private Double amountAfterDiscount;
+    private Double amountPaid;
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
-    @DBRef
-    private Unit unit;
+    private Set<PaymentType> paymentTypes  = new HashSet<>(); 
+    private Double change;
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
-    @DBRef
-    private Tax tax;
-    private Long alertQuantity;
-    private String sku;
-    private String image;
-    private String itemCode;
-    private Double priceWithoutTax;
-    private Double purchasePrice;
-    private TaxType taxType;
-    private ItemType itemType;
-    private Double profitMargin;
-    private Double sellingPrice;
-    private String barCode;
-    private Long availableItems; 
-    
-    
-    //transient objects for a sale
-    private Long quantity;
-    private double total;
-    
+    private Set<InventoryItem> saleItems = new HashSet<>();
 }

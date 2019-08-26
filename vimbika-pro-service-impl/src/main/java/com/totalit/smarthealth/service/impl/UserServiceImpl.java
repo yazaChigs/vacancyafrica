@@ -169,6 +169,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean checkDuplicate(User current, User old) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         if(current.getId() == null){
+        return userRepo.existsByActiveAndUserNameIgnoreCase(Boolean.TRUE, current.getUserName());
+        }
+        old = get(current.getId());
+        if(current.getUserName().equalsIgnoreCase(old.getUserName())){
+            return Boolean.TRUE;
+        }else{
+          return userRepo.existsByActiveAndUserNameIgnoreCase(Boolean.TRUE, current.getUserName());        }
     }
 }

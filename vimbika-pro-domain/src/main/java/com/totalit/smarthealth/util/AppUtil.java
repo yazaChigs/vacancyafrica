@@ -6,6 +6,7 @@
 package com.totalit.smarthealth.util;
 
 import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -13,7 +14,30 @@ import java.util.UUID;
  * @author roy
  */
 public class AppUtil {
-    public static String getCustomerId(int id){
+    public static String randomNumber(){
+       Random rand = new Random();
+       String randomNumber = String.format("%04d", rand.nextInt(10000)); 
+       return randomNumber;
+    }
+    
+    public static String getReferenceNumber(int countItems){
+       Random rand = new Random();
+       String count = zeroAppend(countItems);
+       String randomNumber = String.format("%04d", rand.nextInt(10000));
+       int currentDay = DateUtil.getCurrentDay();
+       int currentMonth = DateUtil.getCurrentMonth()+1;
+       
+        StringBuilder sb = new StringBuilder();
+        sb.append(count);
+        sb.append(0);
+        sb.append(currentDay);
+        sb.append(currentMonth);
+        sb.append(getYear());
+        sb.append(randomNumber);
+        return sb.toString();
+    }
+    
+    public static String getCompanyId(int id){
         String companyId = zeroAppend(id);
         String[] days = {"", "NM", "OL", "PK", "QJ", "RI", "SH", "TG",
                              "UF", "VE", "WD", "XC", "YB", "ZA", "AZ",

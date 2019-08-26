@@ -8,6 +8,7 @@ package com.totalit.smarthealth.domain;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -19,5 +20,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @TypeAlias("paymentType")
 @Getter @Setter @NoArgsConstructor
 public class PaymentType extends BaseNameCompany{
-    
+    private Double amount;  //On confirm payment, this property carries the value for payment chosen
+    private String paymentNote;
 }
