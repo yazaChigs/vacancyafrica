@@ -15,10 +15,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
  *
  * @author roy
  */
-@Document(collection="payment_types")
-@TypeAlias("paymentType")
+@Document(collection="expense_categories")
+@TypeAlias("expenseCategory")
 @Getter @Setter @NoArgsConstructor
-public class PaymentType extends BaseNameCompany{
-    private Double amount;  //On confirm payment, this property carries the value for payment chosen
-    private String paymentNote;
+public class ExpenseCategory extends BaseNameCompany{
+    
 }

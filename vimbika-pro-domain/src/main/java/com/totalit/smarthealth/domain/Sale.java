@@ -8,7 +8,9 @@ package com.totalit.smarthealth.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.totalit.smarthealth.domain.util.SaleStatus;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,8 +43,11 @@ public class Sale extends BaseCompany{
     private Double amountAfterDiscount;
     private Double amountPaid;
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
-    private Set<PaymentType> paymentTypes  = new HashSet<>(); 
+    @DBRef
+    private List<PaymentReceived> paymentTypes = new ArrayList<>();
     private Double change;
+    @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
+    private Currency currency;
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
     private Set<InventoryItem> saleItems = new HashSet<>();
 }

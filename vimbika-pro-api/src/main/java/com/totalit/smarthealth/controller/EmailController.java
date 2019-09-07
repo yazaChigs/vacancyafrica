@@ -5,13 +5,12 @@
  */
 package com.totalit.smarthealth.controller;
 
-import static com.totalit.smarthealth.controller.CompanyController.logger;
 import com.totalit.smarthealth.domain.Company;
-import com.totalit.smarthealth.domain.Expense;
-import com.totalit.smarthealth.domain.ExpenseCategory;
+import com.totalit.smarthealth.domain.Email;
 import com.totalit.smarthealth.service.CompanyService;
-import com.totalit.smarthealth.service.ExpenseCategoryService;
+import com.totalit.smarthealth.service.EmailService;
 import com.totalit.smarthealth.service.UserService;
+import com.totalit.smarthealth.util.EndPointUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import java.util.HashMap;
@@ -27,6 +26,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,29 +36,27 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
-@RequestMapping("/api/company")
-public class CompanyController {
-    
-    public static final Logger logger = LoggerFactory.getLogger(CompanyController.class);
+@RequestMapping("/api/email")
+public class EmailController {
+    public static final Logger logger = LoggerFactory.getLogger(EmailController.class);
     @Autowired
     private UserService userService;
     @Autowired
-    private CompanyService service;
+    private EmailService service;
     @Autowired
-    private ExpenseCategoryService expenseCategoryService;
+    private CompanyService companyService;
     
     @PostMapping("/save")
-    @ApiOperation("Persists Company to Collection")
-    public ResponseEntity<Map<String, Object>> save(@RequestBody Company company) {
+    @ApiOperation("Persists Email to Collection")
+    public ResponseEntity<Map<String, Object>> save(@RequestHeader(value = "Company") String company, @RequestBody Email email) {
         Map<String, Object> response = new HashMap<>();
+        Company c = EndPointUtil.getCompany(company);
+        email.setCompany(c);
         boolean exist = false;
         try{
-        if (!service.checkDuplicate(company, company)) {
-            Company c = service.save(company);
-            if(company.getId()==null){
-                saveStaticData(c);
-            }
-            response.put("item", c);
+        if (!service.checkDuplicate(email, email, c)) {
+            Email s = service.save(email);
+            response.put("item", s);
         } else {
             exist = true;
         }
@@ -71,32 +69,35 @@ public class CompanyController {
             response.put("duplicate", true);
             return new ResponseEntity<>(response, HttpStatus.OK); 
         } 
-        response.put("message", "Company Saved Successfully");
+        response.put("message", "Email Saved Successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("/get-all")
-    @ApiOperation("Returns All Companies")
-    public ResponseEntity<?> getAllCompanies() {
-        logger.info("Retrieving All Companies{}");
-        return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
+    @ApiOperation("Returns All Emails")
+    public ResponseEntity<?> getAll(@RequestHeader(value = "Company") String company) {
+        logger.info("Retrieving All Emails By Company{}");
+        Company c = EndPointUtil.getCompany(company);
+        return new ResponseEntity<>(service.getByCompany(c), HttpStatus.OK);
     }
-     @GetMapping("/get-item/{id}")
-    @ApiOperation(value = "Returns Company of Id passed as parameter", response = Company.class)
-    public ResponseEntity<Company> getItem(@ApiParam(name = "id", value = "Id used to fetch the object") @PathVariable("id") String id) {
+    
+    
+    @GetMapping("/get-item/{id}")
+    @ApiOperation(value = "Returns Email of Id passed as parameter", response = Email.class)
+    public ResponseEntity<Email> getItem(@ApiParam(name = "id", value = "Id used to fetch the object") @PathVariable("id") String id) {
         return new ResponseEntity<>(service.get(id), HttpStatus.OK);
     }
     
     @DeleteMapping("/delete/{id}")
-    @ApiOperation("Set Inactive to Company Object")
+    @ApiOperation("Set Inactive to Email Object")
     public ResponseEntity<Map<String, Object>> delete(@ApiParam(name = "id", value = "id for object to be deleted") @PathVariable("id") String id) {
-        logger.info("Set Inactive on Company Object");
+        logger.info("Set Inactive on Email Object");
         Map<String, Object> response = new HashMap<>();
         String itemMessage = "";
         try {
-          Company company = service.get(id);
-          company.setActive(Boolean.FALSE);
-          company.setDeleted(Boolean.TRUE);
-          service.save(company);
+          Email email = service.get(id);
+          email.setActive(Boolean.FALSE);
+          email.setDeleted(Boolean.TRUE);
+          service.save(email);
            
         } catch (Exception ex) {
             response.put("message", ex.getMessage());
@@ -105,16 +106,5 @@ public class CompanyController {
         itemMessage = itemMessage + " Deleted Successfully"; 
         response.put("message", itemMessage);
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-    
-    
-    public void saveStaticData(Company company){
-        
-        // Save Purchase Expense
-        ExpenseCategory expenseCategory = new ExpenseCategory();
-        expenseCategory.setCompany(company);
-        expenseCategory.setName("PURCHASE EXPENSE");
-        expenseCategory.setDescription("Expense for all purchases bought");
-        expenseCategoryService.save(expenseCategory);
     }
 }

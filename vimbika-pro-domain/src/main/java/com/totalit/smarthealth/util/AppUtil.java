@@ -5,6 +5,7 @@
  */
 package com.totalit.smarthealth.util;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
@@ -88,5 +89,9 @@ public class AppUtil {
     public static String generateUUID(){
         UUID uuid = UUID.randomUUID();
         return uuid.toString();
+    }
+    public static double roundNumber(Double amt){
+        DecimalFormat df = new DecimalFormat("####0.00");
+        return Double.parseDouble(df.format(amt));
     }
 }

@@ -15,10 +15,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
  *
  * @author roy
  */
-@Document(collection="payment_types")
-@TypeAlias("paymentType")
+
+@Document(collection="currencies")
+@TypeAlias("currency")
 @Getter @Setter @NoArgsConstructor
-public class PaymentType extends BaseNameCompany{
-    private Double amount;  //On confirm payment, this property carries the value for payment chosen
-    private String paymentNote;
+public class Currency extends BaseNameCompany{
+    private Float rate;
+    private Boolean isBaseCurrency;
+    private String symbol;
 }

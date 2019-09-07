@@ -18,5 +18,6 @@ import java.util.List;
 public interface SaleService extends GenericCompanyService<Sale>{
     Long countByCompany(Company company);
     List<Sale> findByCompanyAndDateCreatedAndSaleStatus(Company company, Date date, SaleStatus saleStatus);
-    Long countByCompanyAndDateCreatedAndSaleStatus(Company company, Date date, SaleStatus saleStatus);
+    Long countByCompanyAndDateCreatedAndSaleStatus(Company company, Date date, SaleStatus saleStatus);   
+    List<Sale> findSaleByDateCreated(Date date, Company company);
 }

@@ -8,11 +8,14 @@ package com.totalit.smarthealth.controller;
 import com.totalit.smarthealth.domain.Account;
 import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.InventoryItem;
+import com.totalit.smarthealth.domain.PaymentReceived;
 import com.totalit.smarthealth.domain.PaymentType;
 import com.totalit.smarthealth.domain.Sale;
 import com.totalit.smarthealth.domain.util.SaleStatus;
 import com.totalit.smarthealth.service.AccountService;
+import com.totalit.smarthealth.service.CompanyService;
 import com.totalit.smarthealth.service.InventoryItemService;
+import com.totalit.smarthealth.service.PaymentReceivedService;
 import com.totalit.smarthealth.service.SaleService;
 import com.totalit.smarthealth.service.UserService;
 import com.totalit.smarthealth.util.AppUtil;
@@ -21,6 +24,7 @@ import com.totalit.smarthealth.util.EndPointUtil;
 import io.swagger.annotations.ApiOperation;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -51,9 +55,12 @@ public class SaleController {
     private SaleService saleService;
     @Autowired
     private AccountService accountService;
-    
+    @Autowired
+    private CompanyService companyService;    
     @Autowired
     private InventoryItemService inventoryItemService;
+    @Autowired
+    private PaymentReceivedService paymentReceivedService;
     
     @PostMapping("/save")
     @ApiOperation("Persists Sale to Collection")
@@ -67,7 +74,14 @@ public class SaleController {
             if(sale.getSaleStatus().equals(SaleStatus.COMPLETE)){
                 Long count = saleService.countByCompany(c);
                 int recordNumber = 1 + count.intValue();
-                sale.setReferenceNumber(AppUtil.getReferenceNumber(recordNumber));
+                String ref = AppUtil.getReferenceNumber(recordNumber);
+                sale.setReferenceNumber(ref);
+                sale.getPaymentTypes().forEach(t ->{
+                    t.setReference(ref);
+                    t.setPayer(payer);
+                });
+                List<PaymentReceived> paymentsReceived = paymentReceivedService.saveAll(sale.getPaymentTypes());                
+                sale.setPaymentTypes(paymentsReceived);
             }else{               
                 if(sale.getReferenceNumber()==null){
                 sale.setReferenceNumber("HOLD_REF-" + AppUtil.randomNumber());
@@ -75,21 +89,22 @@ public class SaleController {
             }
             sale.setTimeIniated(DateUtil.getLocalDateTimeFromString(sale.getTimeInit()));
             Sale s = saleService.save(sale);
-            // Credit Company Account 
-            if(sale.getSaleStatus().equals(SaleStatus.COMPLETE)){
-                if(s!=null){
-                    for(PaymentType type: sale.getPaymentTypes()){
-                            Account account = new Account();
-                            account.setAmount(type.getAmount());
-                            account.setPayer(payer);
-                            account.setPaymentType(type);
-                            account.setReferenceNumber(s.getReferenceNumber());
-                            account.setCustomer(sale.getCustomer());
-                            accountService.save(account);
-                          }
-                    deductStock(sale.getSaleItems()); // Deduct Stock for Every Sale Item.
-                }
-            }
+            deductStock(sale.getSaleItems());
+//            // Credit Company Account 
+//            if(sale.getSaleStatus().equals(SaleStatus.COMPLETE)){
+//                if(s!=null){
+//                    for(PaymentType type: sale.getPaymentTypes()){
+//                            Account account = new Account();
+//                            account.setAmount(type.getAmount());
+//                            account.setPayer(payer);
+//                            account.setPaymentType(type);
+//                            account.setReferenceNumber(s.getReferenceNumber());
+//                            account.setCustomer(sale.getCustomer());
+//                            accountService.save(account);
+//                          }
+//                    deductStock(sale.getSaleItems()); // Deduct Stock for Every Sale Item.
+//                }
+//            }
             response.put("item", s);
         } 
         catch(Exception ex){
@@ -114,6 +129,17 @@ public class SaleController {
         logger.info("Counting All On Hold Sales By Company{} and Date");
         Company c = EndPointUtil.getCompany(company);
         return new ResponseEntity<>(saleService.countByCompanyAndDateCreatedAndSaleStatus(c, new Date(), SaleStatus.ON_HOLD), HttpStatus.OK);
+    }
+    
+    @GetMapping("/sale-by-date")
+    @ApiOperation("Returns All Sales By Date")
+    public ResponseEntity<?> getAll(@RequestHeader(value = "Company") String company) {
+        logger.info("Retrieving All Sales By Date & Company{}");
+        Company c = EndPointUtil.getCompany(company);
+       // Company c = companyService.get(company);
+        Date date = new Date();
+        date.setTime(0);
+        return new ResponseEntity<>(saleService.findSaleByDateCreated(new Date(), c), HttpStatus.OK);
     }
     
     public void deductStock(Set<InventoryItem> items){

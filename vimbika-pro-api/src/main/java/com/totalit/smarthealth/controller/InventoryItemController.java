@@ -6,14 +6,19 @@
 package com.totalit.smarthealth.controller;
 
 import com.totalit.smarthealth.domain.Company;
+import com.totalit.smarthealth.domain.Currency;
 import com.totalit.smarthealth.domain.InventoryItem;
+import com.totalit.smarthealth.domain.Purchase;
 import com.totalit.smarthealth.service.CompanyService;
+import com.totalit.smarthealth.service.CurrencyService;
 import com.totalit.smarthealth.service.InventoryItemService;
 import com.totalit.smarthealth.service.UserService;
+import com.totalit.smarthealth.util.AppUtil;
 import com.totalit.smarthealth.util.EndPointUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +50,8 @@ public class InventoryItemController {
     private InventoryItemService service;
     @Autowired
     private CompanyService companyService;
+    @Autowired
+    private CurrencyService currencyService;
     
     @PostMapping("/item/save")
     @ApiOperation("Persists InventoryItem to Collection")
@@ -77,12 +84,44 @@ public class InventoryItemController {
     public ResponseEntity<?> getAll(@RequestHeader(value = "Company") String company) {
         logger.info("Retrieving All InventoryItems By Company{}");
         Company c = EndPointUtil.getCompany(company);
-        return new ResponseEntity<>(service.getByCompany(c), HttpStatus.OK);
+        List<InventoryItem> list = service.getByCompany(c);
+        Currency currency = currencyService.getBaseCurrency(c);
+        if(currency !=null){
+            list.forEach(item ->{
+                double rate = (100+item.getProfitMargin())/100;
+                if(item.getCurrency() != null){ //Currency is not null for inventory item                    
+                    if(!item.getCurrency().getId().equalsIgnoreCase(currency.getId())){ //Currency for this inventory item should not be equal to base currency for it to be calculated                       
+                        item.setSellingPrice(AppUtil.roundNumber(item.getPurchasePrice() * rate * currency.getRate()));
+                        item.setCurrency(currency);
+                    }
+                }else { // If Inventory Item Currency is null, calculate selling price using base Currency
+                        item.setSellingPrice(AppUtil.roundNumber(item.getPurchasePrice() * rate * currency.getRate()));
+                        item.setCurrency(currency);
+                    }
+                
+            });
+        }
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
     @GetMapping("/item/get-item/{id}")
     @ApiOperation(value = "Returns InventoryItem of Id passed as parameter", response = InventoryItem.class)
-    public ResponseEntity<InventoryItem> getItem(@ApiParam(name = "id", value = "Id used to fetch the object") @PathVariable("id") String id) {
-        return new ResponseEntity<>(service.get(id), HttpStatus.OK);
+    public ResponseEntity<InventoryItem> getItem(@RequestHeader(value = "Company") String company, @ApiParam(name = "id", value = "Id used to fetch the object") @PathVariable("id") String id) {
+        Company c = EndPointUtil.getCompany(company);
+        InventoryItem item = service.get(id);
+        Currency currency = currencyService.getBaseCurrency(c);
+        if (currency != null) {
+            double rate = (100+item.getProfitMargin())/100;
+            if (item.getCurrency() != null) {
+                if (!item.getCurrency().getId().equalsIgnoreCase(currency.getId())) {
+                    item.setSellingPrice(AppUtil.roundNumber(item.getPurchasePrice() * rate * currency.getRate()));
+                    item.setCurrency(currency);
+                }
+            } else{
+                item.setSellingPrice(AppUtil.roundNumber(item.getPurchasePrice() * rate * currency.getRate()));
+                item.setCurrency(currency);
+            }
+        }
+        return new ResponseEntity<>(item, HttpStatus.OK);
     }
     
     @DeleteMapping("/item/delete/{id}")
@@ -104,5 +143,9 @@ public class InventoryItemController {
         itemMessage = itemMessage + " Deleted Successfully"; 
         response.put("message", itemMessage);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
+    public void newPurchase(InventoryItem inventoryItem){
+        Purchase purchase = new Purchase();
     }
 }

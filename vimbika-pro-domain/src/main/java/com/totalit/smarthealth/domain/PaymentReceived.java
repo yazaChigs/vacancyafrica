@@ -20,21 +20,20 @@ import org.springframework.data.mongodb.core.mapping.Document;
  *
  * @author roy
  */
-@Document(collection = "payments")
-@TypeAlias("payment")
+@Document(collection = "payments_received")
+@TypeAlias("paymentReceived")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Payment extends BaseCompany{
+public class PaymentReceived extends BaseCompany{
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
     @DBRef
     private PaymentType paymentType;
     private Double amount;
     private String paymentNote;
+    private String reference;
+    private String payer;
+    private PaymentDescription paymentDescription;
     @CreatedDate
     private LocalDateTime dateTime;
-    private PaymentDescription paymentDescription;
-    @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
-    @DBRef
-    private Currency currency;
 }

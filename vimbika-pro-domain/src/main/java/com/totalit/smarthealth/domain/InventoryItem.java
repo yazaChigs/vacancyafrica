@@ -11,6 +11,7 @@ import com.totalit.smarthealth.domain.util.TaxType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -33,6 +34,10 @@ public class InventoryItem extends BaseCompany{
     private Unit unit;
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
     @DBRef
+    private Currency currency;
+    
+    @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
+    @DBRef
     private Tax tax;
     private Long alertQuantity;
     private String sku;
@@ -46,7 +51,8 @@ public class InventoryItem extends BaseCompany{
     private Double sellingPrice;
     private String barCode;
     private Long availableItems; 
-    
+    @Transient
+    private Supplier supplier;
     
     //transient objects for a sale
     private Long quantity;

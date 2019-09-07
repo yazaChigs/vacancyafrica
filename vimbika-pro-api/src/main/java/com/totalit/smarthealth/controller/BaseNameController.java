@@ -10,6 +10,7 @@ import com.totalit.smarthealth.domain.BaseName;
 import com.totalit.smarthealth.domain.BaseNameCompany;
 import com.totalit.smarthealth.domain.Category;
 import com.totalit.smarthealth.domain.Company;
+import com.totalit.smarthealth.domain.ExpenseCategory;
 import com.totalit.smarthealth.domain.Module;
 import com.totalit.smarthealth.domain.PaymentType;
 import com.totalit.smarthealth.domain.Permission;
@@ -18,6 +19,7 @@ import com.totalit.smarthealth.domain.UserRole;
 import com.totalit.smarthealth.domain.util.BaseNameType;
 import com.totalit.smarthealth.exceptions.InvalidParameterPassedException;
 import com.totalit.smarthealth.service.CategoryService;
+import com.totalit.smarthealth.service.ExpenseCategoryService;
 import com.totalit.smarthealth.service.GenericNameCompanyService;
 import com.totalit.smarthealth.service.GenericNameService;
 import com.totalit.smarthealth.service.ModuleService;
@@ -71,6 +73,8 @@ public class BaseNameController {
     private CategoryService categoryService;
     @Autowired
     private PaymentTypeService paymentTypeService;
+    @Autowired
+    private ExpenseCategoryService expenseCategoryService;
     
     @PostMapping("/save")
     @ApiOperation("Persists New Generic Name Object to Collection")
@@ -146,6 +150,17 @@ public class BaseNameController {
                     exist = true;
                 }
             }
+             else if(type.equalsIgnoreCase(BaseNameType.EXPENSE_CATEGORY.toString())){
+                ExpenseCategory expenseCategory = objectMapper.readValue(item, ExpenseCategory.class);
+                if(!expenseCategoryService.checkDuplicate(expenseCategory, expenseCategory, c)){
+                    expenseCategory.setCompany(c);
+                ExpenseCategory r = expenseCategoryService.save(expenseCategory);
+                itemMessage = "Expense Category";
+                response.put("item", r); 
+                }else{
+                    exist = true;
+                }
+            }
             
             
         } catch (Exception ex) {
@@ -194,6 +209,11 @@ public class BaseNameController {
            response.put("list", list);
            return new ResponseEntity<>(response, HttpStatus.OK); 
         }
+        else if(type.equalsIgnoreCase(BaseNameType.EXPENSE_CATEGORY.toString())){
+           List<ExpenseCategory> list = expenseCategoryService.getAll(c);            
+           response.put("list", list);
+           return new ResponseEntity<>(response, HttpStatus.OK); 
+        }
         response.put("message", "Incorrect Parameter (type) Passed");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -228,6 +248,10 @@ public class BaseNameController {
            else if(type.equalsIgnoreCase(BaseNameType.PAYMENT_TYPE.toString())){
                delete(paymentTypeService, id);
                itemMessage = "Payment Type";
+           }
+           else if(type.equalsIgnoreCase(BaseNameType.EXPENSE_CATEGORY.toString())){
+               delete(expenseCategoryService, id);
+               itemMessage = "Expense Category";
            }
             
         } catch (Exception ex) {

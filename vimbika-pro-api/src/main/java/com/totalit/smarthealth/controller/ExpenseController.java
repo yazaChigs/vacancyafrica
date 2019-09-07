@@ -5,13 +5,14 @@
  */
 package com.totalit.smarthealth.controller;
 
-import static com.totalit.smarthealth.controller.CompanyController.logger;
+import static com.totalit.smarthealth.controller.ExpenseController.logger;
 import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.Expense;
-import com.totalit.smarthealth.domain.ExpenseCategory;
 import com.totalit.smarthealth.service.CompanyService;
-import com.totalit.smarthealth.service.ExpenseCategoryService;
+import com.totalit.smarthealth.service.ExpenseService;
 import com.totalit.smarthealth.service.UserService;
+import com.totalit.smarthealth.util.DateUtil;
+import com.totalit.smarthealth.util.EndPointUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,69 +36,63 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author roy
  */
+
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
-@RequestMapping("/api/company")
-public class CompanyController {
-    
-    public static final Logger logger = LoggerFactory.getLogger(CompanyController.class);
+@RequestMapping("/api/expense")
+public class ExpenseController {
+     public static final Logger logger = LoggerFactory.getLogger(ExpenseController.class);
     @Autowired
     private UserService userService;
     @Autowired
-    private CompanyService service;
+    private ExpenseService service;
+    
     @Autowired
-    private ExpenseCategoryService expenseCategoryService;
+    private CompanyService companyService;
     
     @PostMapping("/save")
-    @ApiOperation("Persists Company to Collection")
-    public ResponseEntity<Map<String, Object>> save(@RequestBody Company company) {
+    @ApiOperation("Persists Expense to Collection")
+    public ResponseEntity<Map<String, Object>> save(@RequestHeader(value = "Company") String company, @RequestBody Expense expense) {
         Map<String, Object> response = new HashMap<>();
-        boolean exist = false;
+        Company c = EndPointUtil.getCompany(company);
+        expense.setCompany(c);
+        expense.setExpenseDate(DateUtil.getDateFromStringApi(expense.getExpenseDateString()));
         try{
-        if (!service.checkDuplicate(company, company)) {
-            Company c = service.save(company);
-            if(company.getId()==null){
-                saveStaticData(c);
-            }
-            response.put("item", c);
-        } else {
-            exist = true;
-        }
+            Expense s = service.save(expense);
+            response.put("item", s);
         }
         catch(Exception ex){
             response.put("message", ex.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        if(exist){
-            response.put("duplicate", true);
-            return new ResponseEntity<>(response, HttpStatus.OK); 
-        } 
-        response.put("message", "Company Saved Successfully");
+         
+        response.put("message", "Expense Saved Successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("/get-all")
-    @ApiOperation("Returns All Companies")
-    public ResponseEntity<?> getAllCompanies() {
-        logger.info("Retrieving All Companies{}");
-        return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
+    @ApiOperation("Returns All Expenses")
+    public ResponseEntity<?> getAll(@RequestHeader(value = "Company") String company) {
+        logger.info("Retrieving All Expenses By Company{}");
+        Company c = EndPointUtil.getCompany(company);
+        return new ResponseEntity<>(service.getByCompany(c), HttpStatus.OK);
     }
-     @GetMapping("/get-item/{id}")
-    @ApiOperation(value = "Returns Company of Id passed as parameter", response = Company.class)
-    public ResponseEntity<Company> getItem(@ApiParam(name = "id", value = "Id used to fetch the object") @PathVariable("id") String id) {
+    @GetMapping("/get-item/{id}")
+    @ApiOperation(value = "Returns Expense of Id passed as parameter", response = Expense.class)
+    public ResponseEntity<Expense> getItem(@ApiParam(name = "id", value = "Id used to fetch the object") @PathVariable("id") String id) {
         return new ResponseEntity<>(service.get(id), HttpStatus.OK);
     }
     
     @DeleteMapping("/delete/{id}")
-    @ApiOperation("Set Inactive to Company Object")
+    @ApiOperation("Set Inactive to Expense Object")
     public ResponseEntity<Map<String, Object>> delete(@ApiParam(name = "id", value = "id for object to be deleted") @PathVariable("id") String id) {
-        logger.info("Set Inactive on Company Object");
+        logger.info("Set Inactive on Expense Object");
         Map<String, Object> response = new HashMap<>();
         String itemMessage = "";
         try {
-          Company company = service.get(id);
-          company.setActive(Boolean.FALSE);
-          company.setDeleted(Boolean.TRUE);
-          service.save(company);
+          Expense expense = service.get(id);
+          expense.setActive(Boolean.FALSE);
+          expense.setDeleted(Boolean.TRUE);
+          service.save(expense);
            
         } catch (Exception ex) {
             response.put("message", ex.getMessage());
@@ -105,16 +101,5 @@ public class CompanyController {
         itemMessage = itemMessage + " Deleted Successfully"; 
         response.put("message", itemMessage);
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-    
-    
-    public void saveStaticData(Company company){
-        
-        // Save Purchase Expense
-        ExpenseCategory expenseCategory = new ExpenseCategory();
-        expenseCategory.setCompany(company);
-        expenseCategory.setName("PURCHASE EXPENSE");
-        expenseCategory.setDescription("Expense for all purchases bought");
-        expenseCategoryService.save(expenseCategory);
     }
 }

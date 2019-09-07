@@ -18,6 +18,9 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,9 +36,17 @@ public class SaleServiceImpl implements SaleService{
     @Autowired
     private SaleRepository repo;
     
-     @Resource
+    @Resource
     private UserService userService;
     
+     
+    private final MongoTemplate mongoTemplate;
+    @Autowired
+    public SaleServiceImpl(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+     
+     
     @Override
     public List<Sale> getByCompany(Company company) {
        return repo.findByActiveAndCompany(Boolean.TRUE, company);
@@ -115,5 +126,16 @@ public class SaleServiceImpl implements SaleService{
     @Override
     public Long countByCompanyAndDateCreatedAndSaleStatus(Company company, Date date, SaleStatus saleStatus) {
         return repo.countByCompanyAndSaleStatus(company, saleStatus);
+    }
+
+    @Override
+    public List<Sale> findSaleByDateCreated(Date date, Company company) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("dateCreated").gt(date).lte(date));
+        query.addCriteria(Criteria.where("company").is(company));
+        query.fields().include("amountAfterDiscount");
+        query.fields().include("dateCreated");
+        return mongoTemplate.find(query, Sale.class);
+   // return mongoTemplate.query(Sale.class).distinct("lastname").as(Double.class).all(); 
     }
 }

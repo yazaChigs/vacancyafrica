@@ -9,12 +9,8 @@ package com.totalit.smarthealth.domain.util;
  *
  * @author roy
  */
-public enum BaseNameType {
-     MODULE,
-     ROLE,
-     PERMISSION,
-     UNIT,
-     CATEGORY,
-     PAYMENT_TYPE,
-     EXPENSE_CATEGORY
+public enum PaymentDescription {
+    PURCHASE, 
+    SALE,   
+    EXPENSE
 }

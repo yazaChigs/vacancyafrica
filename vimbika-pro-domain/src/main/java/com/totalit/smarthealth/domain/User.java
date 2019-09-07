@@ -44,5 +44,27 @@ public class User extends BaseCompany {
     private String displayName;   
     private Set<UserRole> userRoles = new HashSet<>();
     private Set<Permission> permissions = new HashSet<>();
+    private String companyId;
+    private String companyName;
 
+    public String getCompanyId() {
+        if(getCompany()!=null){
+            return getCompany().getId();
+        }
+        return null;
+    }
+
+    public String getCompanyName() {
+         if(getCompany()!=null){
+            return getCompany().getName();
+        }
+        return null;
+    }
+
+    public String getDisplayName() {
+        return firstName.toUpperCase() + " " + lastName.toUpperCase();
+    }
+    
+
+    
 }

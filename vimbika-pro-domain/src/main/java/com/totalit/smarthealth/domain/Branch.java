@@ -15,10 +15,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
  *
  * @author roy
  */
-@Document(collection="payment_types")
-@TypeAlias("paymentType")
+@Document(collection="branches")
+@TypeAlias("branch")
 @Getter @Setter @NoArgsConstructor
-public class PaymentType extends BaseNameCompany{
-    private Double amount;  //On confirm payment, this property carries the value for payment chosen
-    private String paymentNote;
+public class Branch extends BaseNameCompany{
+    private String street;
+    private String city;
+    private String stateProvince;
+    private String branchContactPerson;
+    private String contactNumber;
 }
