@@ -13,7 +13,9 @@ import com.totalit.smarthealth.service.UserService;
 import com.totalit.smarthealth.util.EndPointUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,5 +108,41 @@ public class EmailController {
         itemMessage = itemMessage + " Deleted Successfully"; 
         response.put("message", itemMessage);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @PostMapping("/activate")
+    @ApiOperation("Update Base Email")
+    public ResponseEntity<Map<String, Object>> updateBaseEmail(@RequestBody Email email, @RequestHeader(value = "Company") String company) {
+        Company c = EndPointUtil.getCompany(company);
+        Map<String, Object> response = new HashMap<>();
+        try {
+            email.setCompany(c);
+            Email cur = service.save(email);
+            List<Email> emails = updateOtherAccounts(cur, c);
+            response.put("emails", emails);
+            if (cur.getIsEmailActive()) {
+                String message = cur.getEmail() + " " + "is now Active Email.";
+                response.put("message", message);
+            } else {
+                response.put("message", "Base Email Is Not Set.");
+            }
+        
+        } catch (Exception ex) {
+            response.put("message", "System error occurred saving item");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    public List<Email> updateOtherAccounts(Email email, Company company) {
+        List<Email> emails = service.getByCompany(company);
+        List<Email> settings = new ArrayList<>();
+        settings.add(email);
+        for (Email c : emails) {
+            if (!email.getId().equalsIgnoreCase(c.getId())) {
+                c.setIsEmailActive(Boolean.FALSE);
+                Email setting = service.save(c);
+                settings.add(setting);
+            }
+        }
+        return settings;
     }
 }

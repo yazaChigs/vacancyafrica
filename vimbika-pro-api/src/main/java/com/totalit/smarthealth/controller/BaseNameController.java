@@ -8,6 +8,7 @@ package com.totalit.smarthealth.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.totalit.smarthealth.domain.BaseName;
 import com.totalit.smarthealth.domain.BaseNameCompany;
+import com.totalit.smarthealth.domain.Brand;
 import com.totalit.smarthealth.domain.Category;
 import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.ExpenseCategory;
@@ -18,6 +19,7 @@ import com.totalit.smarthealth.domain.Unit;
 import com.totalit.smarthealth.domain.UserRole;
 import com.totalit.smarthealth.domain.util.BaseNameType;
 import com.totalit.smarthealth.exceptions.InvalidParameterPassedException;
+import com.totalit.smarthealth.service.BrandService;
 import com.totalit.smarthealth.service.CategoryService;
 import com.totalit.smarthealth.service.ExpenseCategoryService;
 import com.totalit.smarthealth.service.GenericNameCompanyService;
@@ -71,6 +73,8 @@ public class BaseNameController {
     private UnitService unitService;
     @Autowired
     private CategoryService categoryService;
+     @Autowired
+    private BrandService brandService;
     @Autowired
     private PaymentTypeService paymentTypeService;
     @Autowired
@@ -161,6 +165,17 @@ public class BaseNameController {
                     exist = true;
                 }
             }
+            else if(type.equalsIgnoreCase(BaseNameType.BRAND.toString())){
+                Brand brand = objectMapper.readValue(item, Brand.class);
+                if(!brandService.checkDuplicate(brand, brand, c)){
+                    brand.setCompany(c);
+                Brand r = brandService.save(brand);
+                itemMessage = "Brand";
+                response.put("item", r); 
+                }else{
+                    exist = true;
+                }
+            }
             
             
         } catch (Exception ex) {
@@ -214,6 +229,11 @@ public class BaseNameController {
            response.put("list", list);
            return new ResponseEntity<>(response, HttpStatus.OK); 
         }
+        else if(type.equalsIgnoreCase(BaseNameType.BRAND.toString())){
+           List<Brand> list = brandService.getAll(c);            
+           response.put("list", list);
+           return new ResponseEntity<>(response, HttpStatus.OK); 
+        }
         response.put("message", "Incorrect Parameter (type) Passed");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -252,6 +272,10 @@ public class BaseNameController {
            else if(type.equalsIgnoreCase(BaseNameType.EXPENSE_CATEGORY.toString())){
                delete(expenseCategoryService, id);
                itemMessage = "Expense Category";
+           }
+           else if(type.equalsIgnoreCase(BaseNameType.BRAND.toString())){
+               delete(brandService, id);
+               itemMessage = "Brand";
            }
             
         } catch (Exception ex) {

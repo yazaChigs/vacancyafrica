@@ -27,13 +27,13 @@ public class Supplier extends BaseCompany{
     private String city;
     private String stateProvince;
     private String postalCode;
-    private String suffix;
+    private String bpNumber;
     private String country;
     private String email;
     private String mobilePhone;
     private String officePhone;
     private String website;
-    private String taxNumber;
+    private String vatNumber;
     
     
 }

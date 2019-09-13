@@ -6,9 +6,13 @@
 package com.totalit.smarthealth.controller;
 
 import com.totalit.smarthealth.domain.Company;
+import com.totalit.smarthealth.domain.InventoryItem;
 import com.totalit.smarthealth.domain.Payment;
 import com.totalit.smarthealth.domain.Purchase;
+import com.totalit.smarthealth.domain.PurchaseItem;
+import com.totalit.smarthealth.domain.util.PurchaseStatus;
 import com.totalit.smarthealth.service.CompanyService;
+import com.totalit.smarthealth.service.InventoryItemService;
 import com.totalit.smarthealth.service.PaymentService;
 import com.totalit.smarthealth.service.PurchaseService;
 import com.totalit.smarthealth.service.UserService;
@@ -19,6 +23,7 @@ import io.swagger.annotations.ApiParam;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +57,8 @@ public class PurchaseController {
     private PaymentService paymentService;
     @Autowired
     private CompanyService companyService;
+    @Autowired
+    private InventoryItemService inventoryItemService;
    
     @PostMapping("/save")
     @ApiOperation("Persists Purchase to Collection")
@@ -63,7 +70,11 @@ public class PurchaseController {
         try{
             List<Payment> payments = paymentService.saveAll(purchase.getPaymentTypes());
             purchase.setPaymentTypes(payments);
-            Purchase s = service.save(purchase);
+            if(purchase.getIsStockUpdated() == false && purchase.getStatus().equals(PurchaseStatus.RECEIVED)){
+               boolean isUpdated =  updateInventory(purchase.getPurchaseItems()); // Update Inventory items after status is changed to Received
+               purchase.setIsStockUpdated(isUpdated);
+            }
+            Purchase s = service.save(purchase);            
             response.put("item", s);
         }
         catch(Exception ex){
@@ -107,6 +118,24 @@ public class PurchaseController {
         itemMessage = itemMessage + " Deleted Successfully"; 
         response.put("message", itemMessage);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    private Boolean updateInventory(Set<PurchaseItem> purchaseItems) {
+        try{
+        for(PurchaseItem purchaseItem : purchaseItems){
+            InventoryItem inventoryItem = purchaseItem.getInventoryItem();
+            InventoryItem item = inventoryItemService.get(inventoryItem.getId());
+            item.setAvailableItems(purchaseItem.getQuantity() + item.getAvailableItems());
+            item.setTax(purchaseItem.getTax());
+            item.setPurchasePrice(purchaseItem.getPurchasePrice());
+            item.setPriceWithoutTax(purchaseItem.getPriceWithoutTax());
+            item.setSellingPrice(purchaseItem.getSellingPrice());
+            inventoryItemService.save(item);
+        }
+        }catch(Exception e){
+            return false;
+        }
+        return Boolean.TRUE;
     }
     
     

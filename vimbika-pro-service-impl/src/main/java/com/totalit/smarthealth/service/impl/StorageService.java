@@ -28,7 +28,7 @@ public class StorageService {
     Logger logger = LoggerFactory.getLogger(StorageService.class);
     String tomcatHome = System.getProperty("user.home");
     private final Path path = Paths.get(tomcatHome, "/upload-dir");
-    //private final Path path = Paths.get("upload-dir");
+   // private final Path path = Paths.get("upload-dir");
 
     public void store(MultipartFile file) {
         try {

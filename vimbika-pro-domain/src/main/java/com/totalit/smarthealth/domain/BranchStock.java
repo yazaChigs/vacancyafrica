@@ -5,31 +5,28 @@
  */
 package com.totalit.smarthealth.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  *
  * @author roy
  */
+@Document(collection="branch_stock")
+@TypeAlias("branchStock")
 @Getter @Setter @NoArgsConstructor
-public class PurchaseItem implements Serializable{
-    @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified", "tax", "total", "quantity"})
-    @DBRef
-    private InventoryItem inventoryItem;
-    private Long quantity;
-    private Double priceWithoutTax;
+public class BranchStock extends BaseEntity{
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
     @DBRef
-    private Tax tax;
-    private Double taxAmount;
-    private Double discount;
-    private Double purchasePrice;
-    private Double totalAmount;
-    private Long profitMargin;
-    private Double sellingPrice;
+    private Branch branch;
+    @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
+    @DBRef
+    private InventoryItem item;
+    private Long stock;
 }

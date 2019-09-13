@@ -8,6 +8,8 @@ package com.totalit.smarthealth.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.totalit.smarthealth.domain.util.ItemType;
 import com.totalit.smarthealth.domain.util.TaxType;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,6 +31,9 @@ public class InventoryItem extends BaseCompany{
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
     @DBRef
     private Category category;
+     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
+    @DBRef
+    private Brand brand;
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
     @DBRef
     private Unit unit;
@@ -40,8 +45,6 @@ public class InventoryItem extends BaseCompany{
     @DBRef
     private Tax tax;
     private Long alertQuantity;
-    private String sku;
-    private String image;
     private String itemCode;
     private Double priceWithoutTax;
     private Double purchasePrice;
@@ -57,5 +60,6 @@ public class InventoryItem extends BaseCompany{
     //transient objects for a sale
     private Long quantity;
     private double total;
+    private List<ProductImage> productImages = new ArrayList<>();
     
 }

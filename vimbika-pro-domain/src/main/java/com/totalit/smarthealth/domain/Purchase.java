@@ -60,8 +60,11 @@ public class Purchase extends BaseCompany {
     
     private Double totalAmountPaid = 0.0;
     private Long quantities;
-    @Transient
+    @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
+    @DBRef
     private Currency currency;
+    private Boolean isStockUpdated = Boolean.FALSE;
+    
 
     public Double getTotalAmountPaid() {
         for(Payment payment : getPaymentTypes()){

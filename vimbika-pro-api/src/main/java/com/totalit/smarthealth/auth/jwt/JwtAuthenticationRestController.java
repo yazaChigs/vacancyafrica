@@ -50,6 +50,9 @@ public class JwtAuthenticationRestController {
 		final String token = jwtTokenUtil.generateToken(userDetails);
                 final User user = userService.findByUserName(authenticationRequest.getUserName());
                 if(user != null){
+                    if(user.getCompany() !=null){
+                        return ResponseEntity.ok(new JwtTokenResponse(token, user, user.getCompany()));
+                    }
                     return ResponseEntity.ok(new JwtTokenResponse(token, user));
                 }
 		return ResponseEntity.ok(new JwtTokenResponse(token));
