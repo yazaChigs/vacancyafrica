@@ -39,8 +39,7 @@ public class InventoryItem extends BaseCompany{
     private Unit unit;
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
     @DBRef
-    private Currency currency;
-    
+    private Currency currency;    
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
     @DBRef
     private Tax tax;

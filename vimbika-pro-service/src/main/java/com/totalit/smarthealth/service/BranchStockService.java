@@ -16,6 +16,6 @@ import java.util.List;
  * @author roy
  */
 public interface BranchStockService extends GenericService<BranchStock>{
-    BranchStock findByBranchAndItem(Branch branch, InventoryItem item);
-    List<BranchStock> getAll(Company company);
+    List<BranchStock> findByBranchAndItem(Branch branch, InventoryItem item);
+    List<BranchStock> getAll(String companyId);
 }

@@ -10,6 +10,7 @@ import com.totalit.smarthealth.domain.BranchStock;
 import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.InventoryItem;
 import java.util.List;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface BranchStockRepository extends AbstractRepo<BranchStock, String> {
-    BranchStock findByBranchAndItem(Branch branch, InventoryItem item);
-    List<BranchStock> findByBranchCompanyAndActive(Company company, Boolean active);
+    List<BranchStock> findByBranchAndItem(Branch branch, InventoryItem item);
+    List<BranchStock> findByCompanyId(String id);
+    
 }

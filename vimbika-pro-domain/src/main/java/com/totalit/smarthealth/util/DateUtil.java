@@ -67,8 +67,9 @@ public class DateUtil {
     }
 
     public static Date getDateFromStringApi(String date) {
+        SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         try {
-            return apiFormat.parse(date);
+            return ft.parse(date);
         } catch (ParseException ex) {
             System.out.println("Error occurred");
         }

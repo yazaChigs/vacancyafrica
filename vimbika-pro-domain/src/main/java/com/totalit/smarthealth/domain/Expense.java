@@ -39,4 +39,7 @@ public class Expense extends BaseCompany{
     private Double amount;
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
     private Set<Payment> paymentTypes  = new HashSet<>(); 
+    @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
+    @DBRef
+    private Currency currency;
 }

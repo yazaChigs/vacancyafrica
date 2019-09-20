@@ -8,6 +8,7 @@ package com.totalit.smarthealth.service;
 import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.Sale;
 import com.totalit.smarthealth.domain.util.SaleStatus;
+import com.totalit.smarthealth.query.SaleDynamicQuery;
 import java.util.Date;
 import java.util.List;
 
@@ -20,4 +21,5 @@ public interface SaleService extends GenericCompanyService<Sale>{
     List<Sale> findByCompanyAndDateCreatedAndSaleStatus(Company company, Date date, SaleStatus saleStatus);
     Long countByCompanyAndDateCreatedAndSaleStatus(Company company, Date date, SaleStatus saleStatus);   
     List<Sale> findSaleByDateCreated(Date date, Company company);
+    List<Sale> findBySearchSaleDto(SaleDynamicQuery searchSaleDto);
 }

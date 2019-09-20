@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -131,15 +132,13 @@ public class SaleController {
         return new ResponseEntity<>(saleService.countByCompanyAndDateCreatedAndSaleStatus(c, new Date(), SaleStatus.ON_HOLD), HttpStatus.OK);
     }
     
-    @GetMapping("/sale-by-date")
+    @GetMapping("/by-date")
     @ApiOperation("Returns All Sales By Date")
-    public ResponseEntity<?> getAll(@RequestHeader(value = "Company") String company) {
+    public ResponseEntity<?> getAll(@RequestHeader(value = "Company") String company, @RequestParam("date") String date) {
         logger.info("Retrieving All Sales By Date & Company{}");
         Company c = EndPointUtil.getCompany(company);
-       // Company c = companyService.get(company);
-        Date date = new Date();
-        date.setTime(0);
-        return new ResponseEntity<>(saleService.findSaleByDateCreated(new Date(), c), HttpStatus.OK);
+        Date d = DateUtil.getDateFromStringApi(date);
+        return new ResponseEntity<>(saleService.findSaleByDateCreated(d, c), HttpStatus.OK);
     }
     
     public void deductStock(Set<InventoryItem> items){

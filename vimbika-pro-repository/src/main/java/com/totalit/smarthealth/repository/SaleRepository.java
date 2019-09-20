@@ -21,4 +21,5 @@ public interface SaleRepository extends AbstractCompanyRepository<Sale, String>{
      Long countByCompany(Company company);
      List<Sale> findByCompanyAndSaleStatus(Company company, SaleStatus saleStatus);
      Long countByCompanyAndSaleStatus(Company company, SaleStatus saleStatus);
+    
 }

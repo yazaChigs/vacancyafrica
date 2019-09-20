@@ -81,10 +81,16 @@ public class CurrencyController {
         Company c = EndPointUtil.getCompany(company);
         return new ResponseEntity<>(service.getAll(c), HttpStatus.OK);
     }
-    @GetMapping("/get-item/{id}")
+     @GetMapping("/get-item/{id}")
     @ApiOperation(value = "Returns Currency of Id passed as parameter", response = Currency.class)
     public ResponseEntity<Currency> getItem(@ApiParam(name = "id", value = "Id used to fetch the object") @PathVariable("id") String id) {
         return new ResponseEntity<>(service.get(id), HttpStatus.OK);
+    }
+    @GetMapping("/active")
+    @ApiOperation(value = "Returns Currency Active Currency", response = Currency.class)
+    public ResponseEntity<Currency> getActiveCuurency( @RequestHeader(value = "Company") String company) {
+          Company c = EndPointUtil.getCompany(company);
+        return new ResponseEntity<>(service.getBaseCurrency(c), HttpStatus.OK);
     }
     
     @DeleteMapping("/delete/{id}")

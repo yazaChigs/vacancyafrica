@@ -162,7 +162,7 @@ public class CompanyController {
         ExpenseCategory expenseCategory = new ExpenseCategory();
         expenseCategory.setCompany(company);
         expenseCategory.setName("PURCHASE EXPENSE");
-        expenseCategory.setDescription("Expense for all purchases bought");
+        expenseCategory.setDescription("Expense Category for all purchases.");
         expenseCategoryService.save(expenseCategory);
     }
 }

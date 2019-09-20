@@ -22,11 +22,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @TypeAlias("branchStock")
 @Getter @Setter @NoArgsConstructor
 public class BranchStock extends BaseEntity{
+    String companyId;
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
     @DBRef
     private Branch branch;
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
     @DBRef
     private InventoryItem item;
-    private Long stock;
+    private Long transfered = 0l;
+    private Long stock = 0l;
 }

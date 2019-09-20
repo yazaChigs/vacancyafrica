@@ -143,25 +143,28 @@ public class InventoryItemController {
     }
     @GetMapping("/item/branch/{itemId}/{branchId}")
     @ApiOperation(value = "Returns Branch Stock of Item Id and Branch Id passed as parameter", response = InventoryItem.class)
-    public ResponseEntity<BranchStock> getBranchItem(@RequestHeader(value = "Company") String company,
+    public ResponseEntity<Long> getBranchItem(@RequestHeader(value = "Company") String company,
             @ApiParam(name = "id", value = "Item Id used to fetch the object")
             @PathVariable("itemId") String itemId,
             @PathVariable("branchId") String branchId) {
         Company c = EndPointUtil.getCompany(company);
         InventoryItem item = service.get(itemId);
         Branch branch =  branchService.get(branchId);
-        BranchStock branchStock = branchStockService.findByBranchAndItem(branch, item);        
-        return new ResponseEntity<>(branchStock, HttpStatus.OK);
+        List<BranchStock> branchStock = branchStockService.findByBranchAndItem(branch, item);    
+        Long totalStock = branchStock.stream().mapToLong(BranchStock::getTransfered).sum();
+        return new ResponseEntity<>(totalStock, HttpStatus.OK);
     }
     @GetMapping("/item/branch-stocks")
     @ApiOperation("Returns All InventoryItems")
     public ResponseEntity<?> getAllBranchStock(@RequestHeader(value = "Company") String company) {
-        logger.info("Retrieving All InventoryItems By Company{}");
+        logger.info("Retrieving All Branch Stocks By Company{}");
         Company c = EndPointUtil.getCompany(company);
-        List<BranchStock> list = branchStockService.getAll(c);
+        List<BranchStock> list = branchStockService.getAll(company);
         Currency currency = currencyService.getBaseCurrency(c);
         if(currency !=null){
+
             list.forEach(item ->{
+                if(item.getItem()!=null){
                 double rate = (100+item.getItem().getProfitMargin())/100;
                 if(item.getItem().getCurrency() != null){ //Currency is not null for inventory item                    
                     if(!item.getItem().getCurrency().getId().equalsIgnoreCase(currency.getId())){ //Currency for this inventory item should not be equal to base currency for it to be calculated                       
@@ -172,8 +175,9 @@ public class InventoryItemController {
                         item.getItem().setSellingPrice(AppUtil.roundNumber(item.getItem().getPurchasePrice() * rate * currency.getRate()));
                         item.getItem().setCurrency(currency);
                     }
-                
+                }  
             });
+   
         }
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
@@ -183,6 +187,11 @@ public class InventoryItemController {
         Map<String, Object> response = new HashMap<>();
 
         try{
+           InventoryItem inventoryItem = service.get(branchStock.getItem().getId());
+           inventoryItem.setAvailableItems(inventoryItem.getAvailableItems() - branchStock.getTransfered());
+           InventoryItem in = service.save(inventoryItem);
+           response.put("inventory", in);
+           branchStock.setCompanyId(company);
            BranchStock stock = branchStockService.save(branchStock);
            response.put("item", stock);
         }
@@ -251,12 +260,14 @@ public class InventoryItemController {
     @GetMapping("/image")
     @ResponseBody
     public ResponseEntity<org.springframework.core.io.Resource> getFile(@RequestParam("name") String name) {
+        if(name != null && !name.equalsIgnoreCase("null")){
               org.springframework.core.io.Resource file = storageService.loadFile(name);
               if(file != null){
               return ResponseEntity.ok()
                       .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
                       .body(file);
               }
+        }
         return null;
     }
 }

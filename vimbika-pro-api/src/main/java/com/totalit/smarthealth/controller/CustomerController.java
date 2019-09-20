@@ -79,6 +79,13 @@ public class CustomerController {
         Company c = EndPointUtil.getCompany(company);
         return new ResponseEntity<>(service.getByCompany(c), HttpStatus.OK);
     }
+    @GetMapping("/new")
+    @ApiOperation("Returns New Customers")
+    public ResponseEntity<?> getNewcustomer(@RequestHeader(value = "Company") String company) {
+        logger.info("Retrieving New Customers By Company{}");
+        Company c = EndPointUtil.getCompany(company);
+        return new ResponseEntity<>(service.lastTenCustomers(c), HttpStatus.OK);
+    }
     
     
     @GetMapping("/get-item/{id}")

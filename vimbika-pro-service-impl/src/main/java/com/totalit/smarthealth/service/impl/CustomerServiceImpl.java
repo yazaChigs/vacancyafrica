@@ -17,6 +17,12 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +38,18 @@ public class CustomerServiceImpl implements CustomerService{
     @Autowired
     private CustomerRepository repo;
     
-     @Resource
+    @Resource
     private UserService userService;
+    
+    private final MongoTemplate mongoTemplate;
+
+    @Autowired
+    public CustomerServiceImpl(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+    
+    
+    
     @Override
     public List<Customer> getByCompany(Company company) {
          return repo.findByActiveAndCompany(Boolean.TRUE, company);
@@ -106,6 +122,18 @@ public class CustomerServiceImpl implements CustomerService{
     @Override
     public Customer findByUuid(String uuid) {
         return repo.findByUuid(uuid);
+    }
+
+    @Override
+    public List<Customer> lastTenCustomers(Company company) {
+       // Pageable pageableRequest = PageRequest.of(0, 10, Sort.Direction.DESC);
+        Query query = new Query();
+        query.with(new Sort(Sort.Direction.DESC, "dateCreated"));
+        query.limit(10);
+        //query.with(pageableRequest);
+        query.addCriteria(Criteria.where("company").is(company));
+        query.addCriteria(Criteria.where("active").is(true));
+        return mongoTemplate.find(query, Customer.class);
     }
     
 }

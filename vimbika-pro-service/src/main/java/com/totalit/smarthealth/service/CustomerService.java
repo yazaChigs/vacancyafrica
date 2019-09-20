@@ -5,12 +5,14 @@
  */
 package com.totalit.smarthealth.service;
 
+import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.Customer;
+import java.util.List;
 
 /**
  *
  * @author roy
  */
 public interface CustomerService extends GenericCompanyService<Customer>{
-    
+    List<Customer> lastTenCustomers(Company company);
 }

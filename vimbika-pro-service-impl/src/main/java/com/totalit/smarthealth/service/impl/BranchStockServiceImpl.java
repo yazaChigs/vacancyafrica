@@ -17,6 +17,9 @@ import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,9 +34,10 @@ public class BranchStockServiceImpl implements BranchStockService{
     private BranchStockRepository repo;
     @Resource
     private UserService userService;
+    @Autowired private MongoTemplate mongoTemplate;
 
     @Override
-    public BranchStock findByBranchAndItem(Branch branch, InventoryItem item) {
+    public List<BranchStock> findByBranchAndItem(Branch branch, InventoryItem item) {
         return repo.findByBranchAndItem(branch, item);
     }
 
@@ -94,7 +98,9 @@ public class BranchStockServiceImpl implements BranchStockService{
     }
 
     @Override
-    public List<BranchStock> getAll(Company company) {
-        return repo.findByBranchCompanyAndActive(company, Boolean.TRUE);
+    public List<BranchStock> getAll(String companyId) {
+        return repo.findByCompanyId(companyId);
+//         List<BranchStock> branchStocks = mongoTemplate.find(new Query(Criteria.where("compan.id").is(company.getId())), BranchStock.class);
+//         return branchStocks;
     }
 }

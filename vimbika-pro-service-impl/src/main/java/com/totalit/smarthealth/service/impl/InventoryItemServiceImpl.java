@@ -5,6 +5,8 @@
  */
 package com.totalit.smarthealth.service.impl;
 
+import com.totalit.smarthealth.domain.Brand;
+import com.totalit.smarthealth.domain.Category;
 import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.InventoryItem;
 import com.totalit.smarthealth.repository.InventoryItemRepository;
@@ -106,6 +108,26 @@ public class InventoryItemServiceImpl implements InventoryItemService{
     @Override
     public InventoryItem findByUuid(String uuid) {
          return repo.findByUuid(uuid);
+    }
+
+    @Override
+    public List<InventoryItem> findByCompanyAndActiveAndNameLike(Company company, Boolean active, String name) {
+        return repo.findByCompanyAndActiveAndNameLike(company, active, name);
+    }
+
+    @Override
+    public List<InventoryItem> findByCompanyAndActiveAndItemCodeLike(Company company, Boolean active, String itemCode) {
+        return repo.findByCompanyAndActiveAndItemCodeLike(company, active, itemCode);
+    }
+
+    @Override
+    public List<InventoryItem> findByCompanyAndActiveAndCategory(Company company, Boolean active, Category category) {
+        return repo.findByCompanyAndActiveAndCategory(company, active, category);
+    }
+
+    @Override
+    public List<InventoryItem> findByCompanyAndActiveAndBrand(Company company, Boolean active, Brand brand) {
+        return repo.findByCompanyAndActiveAndBrand(company, active, brand);
     }
     
 }
