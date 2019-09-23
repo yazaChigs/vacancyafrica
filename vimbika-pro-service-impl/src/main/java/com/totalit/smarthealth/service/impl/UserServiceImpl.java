@@ -136,30 +136,48 @@ public class UserServiceImpl implements UserService {
          if (t.getId() == null) {
             t.setCreatedBy(getCurrentUser());
             t.setDateCreated(new Date());
-            t.setUuid(AppUtil.generateUUID());
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            String hashedPassword = encoder.encode(t.getPassword());
-            t.setPassword(hashedPassword);
+            t.setUuid(AppUtil.generateUUID());            
+            t.setPassword(encryptPassword(t.getPassword()));
             return userRepo.save(t);
         }
           if(t.getCreatedById()!=null){
                t.setCreatedBy(get(t.getCreatedById()));
            }
+        User user = get(t.getId());
+        if(!user.getPassword().equalsIgnoreCase(t.getPassword())){
+            t.setPassword(encryptPassword(t.getPassword()));
+        }        
         t.setModifiedBy(getCurrentUser());
         t.setDateModified(new Date());
         return userRepo.save(t);
     }
+    private String encryptPassword(String pass){
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String hashedPassword = encoder.encode(pass);
+        return hashedPassword;
+    }
 
     @Override
     public Boolean checkDuplicate(User current, User old, Company company) {
-         if(current.getId() == null){
-        return userRepo.existsByActiveAndUserNameIgnoreCaseAndCompany(Boolean.TRUE, current.getUserName(), company);
+//         if(current.getId() == null){
+//        return userRepo.existsByActiveAndUserNameIgnoreCaseAndCompany(Boolean.TRUE, current.getUserName(), company);
+//        }
+//        old = get(current.getId());
+//        if(current.getUserName().equalsIgnoreCase(old.getUserName())){
+//            return Boolean.TRUE;
+//        }else{
+//          return userRepo.existsByActiveAndUserNameIgnoreCaseAndCompany(Boolean.TRUE, current.getUserName(), company);  
+//        }
+
+        if (current.getId() == null) {
+            return userRepo.existsByActiveAndUserNameIgnoreCase(Boolean.TRUE, current.getUserName());
         }
         old = get(current.getId());
-        if(current.getUserName().equalsIgnoreCase(old.getUserName())){
-            return Boolean.TRUE;
-        }else{
-          return userRepo.existsByActiveAndUserNameIgnoreCaseAndCompany(Boolean.TRUE, current.getUserName(), company);        }
+        if (!current.getUserName().equalsIgnoreCase(old.getUserName())) {
+            return userRepo.existsByActiveAndUserNameIgnoreCase(Boolean.TRUE, current.getUserName());
+        } else {
+            return Boolean.FALSE;
+        }
     }
 
     @Override
@@ -169,13 +187,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean checkDuplicate(User current, User old) {
-         if(current.getId() == null){
-        return userRepo.existsByActiveAndUserNameIgnoreCase(Boolean.TRUE, current.getUserName());
+//         if(current.getId() == null){
+//        return userRepo.existsByActiveAndUserNameIgnoreCase(Boolean.TRUE, current.getUserName());
+//        }
+//        old = get(current.getId());
+//        if(current.getUserName().equalsIgnoreCase(old.getUserName())){
+//            return Boolean.TRUE;
+//        }else{
+//          return userRepo.existsByActiveAndUserNameIgnoreCase(Boolean.TRUE, current.getUserName());        }
+if (current.getId() == null) {
+            return userRepo.existsByActiveAndUserNameIgnoreCase(Boolean.TRUE, current.getUserName());
         }
         old = get(current.getId());
-        if(current.getUserName().equalsIgnoreCase(old.getUserName())){
-            return Boolean.TRUE;
-        }else{
-          return userRepo.existsByActiveAndUserNameIgnoreCase(Boolean.TRUE, current.getUserName());        }
+        if (!current.getUserName().equalsIgnoreCase(old.getUserName())) {
+            return userRepo.existsByActiveAndUserNameIgnoreCase(Boolean.TRUE, current.getUserName());
+        } else {
+            return Boolean.FALSE;
+        }
     }
 }

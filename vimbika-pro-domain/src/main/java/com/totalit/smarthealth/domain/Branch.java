@@ -24,4 +24,5 @@ public class Branch extends BaseNameCompany{
     private String stateProvince;
     private String branchContactPerson;
     private String contactNumber;
+    private Boolean isDefault = Boolean.FALSE;
 }

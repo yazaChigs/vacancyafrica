@@ -22,6 +22,7 @@ import com.totalit.smarthealth.util.AppUtil;
 import com.totalit.smarthealth.util.DateUtil;
 import com.totalit.smarthealth.util.EndPointUtil;
 import io.swagger.annotations.ApiOperation;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -78,8 +79,10 @@ public class SaleController {
                 String ref = AppUtil.getReferenceNumber(recordNumber);
                 sale.setReferenceNumber(ref);
                 sale.getPaymentTypes().forEach(t ->{
+                    t.setCompany(c);
                     t.setReference(ref);
                     t.setPayer(payer);
+                    t.setDateTime(LocalDateTime.now());
                 });
                 List<PaymentReceived> paymentsReceived = paymentReceivedService.saveAll(sale.getPaymentTypes());                
                 sale.setPaymentTypes(paymentsReceived);

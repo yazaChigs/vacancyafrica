@@ -20,6 +20,7 @@ import com.totalit.smarthealth.util.DateUtil;
 import com.totalit.smarthealth.util.EndPointUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,8 +69,14 @@ public class PurchaseController {
         purchase.setCompany(c);
         purchase.setPurchaseDate(DateUtil.getDateFromStringApi(purchase.getPurchaseDateString()));
         try{
-            List<Payment> payments = paymentService.saveAll(purchase.getPaymentTypes());
-            purchase.setPaymentTypes(payments);
+            if(purchase.getPaymentTypes() != null){
+              purchase.getPaymentTypes().forEach((t) -> {
+                  t.setCompany(c);
+                  t.setDateTime(LocalDateTime.now());
+              });
+              List<Payment> payments = paymentService.saveAll(purchase.getPaymentTypes());
+              purchase.setPaymentTypes(payments); 
+            }           
             if(purchase.getIsStockUpdated() == false && purchase.getStatus().equals(PurchaseStatus.RECEIVED)){
                boolean isUpdated =  updateInventory(purchase.getPurchaseItems()); // Update Inventory items after status is changed to Received
                purchase.setIsStockUpdated(isUpdated);

@@ -45,7 +45,7 @@ public class Purchase extends BaseCompany {
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
     Set<PurchaseItem> purchaseItems = new HashSet<>();
     private Double otherCharge;
-    private Double otherChargeTax;
+    private Tax otherChargeTax;
     private Double otherChargeTotal;
     private Double discountOnAll;
     private Double discountOnAllTotal;

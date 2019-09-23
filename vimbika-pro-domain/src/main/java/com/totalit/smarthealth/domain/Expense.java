@@ -6,9 +6,9 @@
 package com.totalit.smarthealth.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,7 +38,8 @@ public class Expense extends BaseCompany{
     private String referenceNumber;
     private Double amount;
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
-    private Set<Payment> paymentTypes  = new HashSet<>(); 
+    @DBRef
+    private List<Payment> paymentTypes  = new ArrayList<>(); 
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
     @DBRef
     private Currency currency;

@@ -50,17 +50,13 @@ public class VimbikaPro  extends SpringBootServletInitializer implements Command
     }
     @Override
     public void run(String... arg) throws Exception {
-       // storageService.init();
-//        UserRole role = new UserRole();
-//        role.setActive(Boolean.TRUE);
-//        role.setName("ROLE_USER");
-//        role.setDeleted(Boolean.FALSE);
-//        roleService.save(role);
-UserRole role = new UserRole();
+        storageService.init();
+        roleScript();
+        UserRole role = new UserRole();
         UserRole ur = null;
         role.setActive(Boolean.TRUE);
-        role.setName("ROLE_ADMIN");
-        role.setDescription("Admin role");
+        role.setName("ROLE_GLOBAL");
+        role.setDescription("Global role");
         UserRole userRole = roleService.getByName(role.getName());
         if(userRole==null){
             ur = roleService.save(role);
@@ -75,7 +71,7 @@ UserRole role = new UserRole();
         user.setActive(Boolean.TRUE);
         //user.setAddress("17057 Zengeza 4 Chitungwiza");
         
-        user.setUserName("shepherd@totalit.org");
+        user.setUserName("shep@totalit.org");
         user.setPassword("Pass1234");
         user.setUserRoles(roles);
         User u = userService.findByUserName(user.getUserName());
@@ -88,5 +84,22 @@ UserRole role = new UserRole();
     public RestTemplate getRestTemplate() {
         return new RestTemplate();
     }
-    
+    private void roleScript(){
+        UserRole role1 = new UserRole();
+        role1.setActive(Boolean.TRUE);
+        role1.setName("ROLE_ADMIN");
+        role1.setDescription("Admin  role");       
+        UserRole userRole1 = roleService.getByName(role1.getName());
+        if(userRole1==null){
+         roleService.save(role1);
+        }
+        UserRole role2 = new UserRole();
+        role2.setActive(Boolean.TRUE);
+        role2.setName("ROLE_USER");
+        role2.setDescription("User  role");       
+        UserRole userRole2 = roleService.getByName(role2.getName());
+        if(userRole2==null){
+            roleService.save(role2);
+        }
+    }
 }

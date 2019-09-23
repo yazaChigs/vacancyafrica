@@ -13,7 +13,9 @@ import com.totalit.smarthealth.service.UserService;
 import com.totalit.smarthealth.util.EndPointUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,5 +106,43 @@ public class BranchController {
         itemMessage = itemMessage + " Deleted Successfully"; 
         response.put("message", itemMessage);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
+    @PostMapping("/default")
+    @ApiOperation("Update Default Branch")
+    public ResponseEntity<Map<String, Object>> updateBaseBranch(@RequestBody Branch branch, @RequestHeader(value = "Company") String company) {
+        Company c = EndPointUtil.getCompany(company);
+        Map<String, Object> response = new HashMap<>();
+        try {
+            branch.setCompany(c);
+            Branch br = service.save(branch);
+            List<Branch> branches = updateOtherBranches(br, c);
+            response.put("branches", branches);
+            if (br.getIsDefault()) {
+                String message = br.getName() + " " + "is now Default Branch.";
+                response.put("message", message);
+            } else {
+                response.put("message", "Default Branch Is Not Set.");
+            }
+        
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            response.put("message", "System error occurred saving item");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    public List<Branch> updateOtherBranches(Branch branch, Company company) {
+        List<Branch> branchs = service.getAll(company);
+        List<Branch> settings = new ArrayList<>();
+        settings.add(branch);
+        for (Branch c : branchs) {
+            if (!branch.getId().equalsIgnoreCase(c.getId())) {
+                c.setIsDefault(Boolean.FALSE);
+                Branch setting = service.save(c);
+                settings.add(setting);
+            }
+        }
+        return settings;
     }
 }

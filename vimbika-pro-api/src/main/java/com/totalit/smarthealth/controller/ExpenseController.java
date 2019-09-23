@@ -8,14 +8,18 @@ package com.totalit.smarthealth.controller;
 import static com.totalit.smarthealth.controller.ExpenseController.logger;
 import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.Expense;
+import com.totalit.smarthealth.domain.Payment;
 import com.totalit.smarthealth.service.CompanyService;
 import com.totalit.smarthealth.service.ExpenseService;
+import com.totalit.smarthealth.service.PaymentService;
 import com.totalit.smarthealth.service.UserService;
 import com.totalit.smarthealth.util.DateUtil;
 import com.totalit.smarthealth.util.EndPointUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +52,9 @@ public class ExpenseController {
     private ExpenseService service;
     
     @Autowired
+    private PaymentService paymentService;
+    
+    @Autowired
     private CompanyService companyService;
     
     @PostMapping("/save")
@@ -58,6 +65,14 @@ public class ExpenseController {
         expense.setCompany(c);
         expense.setExpenseDate(DateUtil.getDateFromStringApi(expense.getExpenseDateString()));
         try{
+             if(expense.getPaymentTypes() != null){
+                expense.getPaymentTypes().forEach((t) -> {
+                     t.setCompany(c);
+                     t.setDateTime(LocalDateTime.now());
+                 });
+              List<Payment> payments = paymentService.saveAll(expense.getPaymentTypes());
+              expense.setPaymentTypes(payments); 
+             }
             Expense s = service.save(expense);
             response.put("item", s);
         }

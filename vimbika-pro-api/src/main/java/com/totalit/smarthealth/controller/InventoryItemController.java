@@ -106,7 +106,7 @@ public class InventoryItemController {
         Currency currency = currencyService.getBaseCurrency(c);
         if(currency !=null){
             list.forEach(item ->{
-                double rate = (100+item.getProfitMargin())/100;
+                double rate = (100 + item.getProfitMargin())/100;
                 if(item.getCurrency() != null){ //Currency is not null for inventory item                    
                     if(!item.getCurrency().getId().equalsIgnoreCase(currency.getId())){ //Currency for this inventory item should not be equal to base currency for it to be calculated                       
                         item.setSellingPrice(AppUtil.roundNumber(item.getPurchasePrice() * rate * currency.getRate()));

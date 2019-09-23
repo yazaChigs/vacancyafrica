@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
@@ -46,6 +47,8 @@ public class User extends BaseCompany {
     private Set<Permission> permissions = new HashSet<>();
     private String companyId;
     private String companyName;
+    @DBRef
+    private Branch branch;
 
     public String getCompanyId() {
         if(getCompany()!=null){
