@@ -30,6 +30,6 @@ public class PurchaseItem implements Serializable{
     private Double discount;
     private Double purchasePrice;
     private Double totalAmount;
-    private Long profitMargin;
+    private Double profitMargin;
     private Double sellingPrice;
 }

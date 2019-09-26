@@ -6,10 +6,13 @@
 package com.totalit.smarthealth.controller;
 
 import static com.totalit.smarthealth.controller.CompanyController.logger;
+import com.totalit.smarthealth.domain.Branch;
 import com.totalit.smarthealth.domain.Company;
-import com.totalit.smarthealth.domain.Expense;
+import com.totalit.smarthealth.domain.Currency;
 import com.totalit.smarthealth.domain.ExpenseCategory;
+import com.totalit.smarthealth.service.BranchService;
 import com.totalit.smarthealth.service.CompanyService;
+import com.totalit.smarthealth.service.CurrencyService;
 import com.totalit.smarthealth.service.ExpenseCategoryService;
 import com.totalit.smarthealth.service.UserService;
 import com.totalit.smarthealth.service.impl.StorageService;
@@ -55,16 +58,21 @@ public class CompanyController {
     private ExpenseCategoryService expenseCategoryService;
     @Autowired
     private StorageService storageService;
+     @Autowired
+    private BranchService branchService;
+     @Autowired
+    private CurrencyService currencyService;
     
     @PostMapping("/save")
     @ApiOperation("Persists Company to Collection")
     public ResponseEntity<Map<String, Object>> save(@RequestBody Company company) {
         Map<String, Object> response = new HashMap<>();
         boolean exist = false;
+        String id = company.getId();
         try{
         if (!service.checkDuplicate(company, company)) {
             Company c = service.save(company);
-            if(company.getId()==null){
+            if(id == null){
                 saveStaticData(c);
             }
             response.put("item", c);
@@ -113,6 +121,22 @@ public class CompanyController {
         }
         itemMessage = itemMessage + " Deleted Successfully"; 
         response.put("message", itemMessage);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @GetMapping("/count")
+    @ApiOperation("Count to Companies")
+    public ResponseEntity<Map<String, Object>> countCompanies() {
+        logger.info("Count Companies");
+        Map<String, Object> response = new HashMap<>();        
+        try {
+            long inactive = service.countByActive(Boolean.FALSE);
+            response.put("inactive", inactive);
+            long active = service.countByActive(Boolean.TRUE);
+            response.put("active", active);
+        } catch (Exception ex) {
+            response.put("message", ex.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
@@ -164,5 +188,23 @@ public class CompanyController {
         expenseCategory.setName("PURCHASE EXPENSE");
         expenseCategory.setDescription("Expense Category for all purchases.");
         expenseCategoryService.save(expenseCategory);
+        Branch branch = new Branch();
+        branch.setName("Main Branch");
+        branch.setActive(Boolean.TRUE);
+        branch.setIsDefault(Boolean.TRUE);
+        branch.setCity(company.getCity());
+        branch.setStateProvince(company.getStateProvince());
+        branch.setContactNumber(company.getOfficePhone());
+        branch.setCompany(company);
+        branch.setStreet(company.getStreet());
+        branchService.save(branch);
+        Currency currency = new Currency();
+        currency.setActive(Boolean.TRUE);
+        currency.setCompany(company);
+        currency.setIsBaseCurrency(Boolean.TRUE);
+        currency.setSymbol("$");
+        currency.setRate(1.0f);
+        currency.setName("USD");
+        currencyService.save(currency);
     }
 }

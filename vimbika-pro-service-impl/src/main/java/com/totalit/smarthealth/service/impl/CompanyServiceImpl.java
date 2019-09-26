@@ -93,5 +93,10 @@ public class CompanyServiceImpl implements CompanyService{
     public Company findByUuid(String uuid) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public Long countByActive(Boolean active) {
+        return repo.countByActive(active);
+    }
     
 }

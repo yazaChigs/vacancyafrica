@@ -55,6 +55,8 @@ public class InventoryItem extends BaseCompany{
     private Long availableItems; 
     @Transient
     private Supplier supplier;
+    @Transient
+    private Long addedItems;
     
     //transient objects for a sale
     private Long quantity;

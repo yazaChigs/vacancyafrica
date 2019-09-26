@@ -6,11 +6,12 @@
 package com.totalit.smarthealth.service;
 
 import com.totalit.smarthealth.domain.Branch;
+import com.totalit.smarthealth.domain.Company;
 
 /**
  *
  * @author roy
  */
 public interface BranchService extends GenericNameCompanyService<Branch>{
-    
+    Branch getDefaultBranch(Company company);
 }

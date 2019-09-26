@@ -12,5 +12,5 @@ import com.totalit.smarthealth.domain.Company;
  * @author roy
  */
 public interface CompanyService extends GenericService<Company> {
-    
+    Long countByActive(Boolean active);
 }

@@ -14,7 +14,6 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -35,6 +34,9 @@ public class Purchase extends BaseCompany {
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
     @DBRef
     private Supplier supplier;
+    @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
+    @DBRef
+    private Branch branch;
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date purchaseDate;
     private String purchaseDateString;
@@ -67,10 +69,13 @@ public class Purchase extends BaseCompany {
     
 
     public Double getTotalAmountPaid() {
+        if(getPaymentTypes()!=null){
         for(Payment payment : getPaymentTypes()){
             totalAmountPaid = totalAmountPaid + payment.getAmount();
         }
         return totalAmountPaid;
+        }
+        return 0.0;
     }
     
     

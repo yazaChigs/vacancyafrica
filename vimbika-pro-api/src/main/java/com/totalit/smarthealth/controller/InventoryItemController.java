@@ -11,11 +11,15 @@ import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.Currency;
 import com.totalit.smarthealth.domain.ProductImage;
 import com.totalit.smarthealth.domain.InventoryItem;
+import com.totalit.smarthealth.domain.Purchase;
+import com.totalit.smarthealth.domain.PurchaseItem;
+import com.totalit.smarthealth.domain.util.PurchaseStatus;
 import com.totalit.smarthealth.service.BranchService;
 import com.totalit.smarthealth.service.BranchStockService;
 import com.totalit.smarthealth.service.CompanyService;
 import com.totalit.smarthealth.service.CurrencyService;
 import com.totalit.smarthealth.service.InventoryItemService;
+import com.totalit.smarthealth.service.PurchaseService;
 import com.totalit.smarthealth.service.UserService;
 import com.totalit.smarthealth.service.impl.StorageService;
 import com.totalit.smarthealth.util.AppUtil;
@@ -24,9 +28,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +76,8 @@ public class InventoryItemController {
     private BranchStockService branchStockService;
      @Autowired
     private StorageService storageService;
-      
+    @Autowired
+    private PurchaseService purchaseService;
     
     @PostMapping("/item/save")
     @ApiOperation("Persists InventoryItem to Collection")
@@ -77,10 +85,14 @@ public class InventoryItemController {
         Map<String, Object> response = new HashMap<>();
         Company c = EndPointUtil.getCompany(company);
         inventoryItem.setCompany(c);
+        String itemId = inventoryItem.getId();
         boolean exist = false;
         try{
         if (!service.checkDuplicate(inventoryItem, inventoryItem, c)) {
             InventoryItem s = service.save(inventoryItem);
+            if(itemId == null){
+                createPurchase(s, c);
+            }
             response.put("item", s);
         } else {
             exist = true;
@@ -269,5 +281,48 @@ public class InventoryItemController {
               }
         }
         return null;
+    }
+    
+    private void createPurchase(InventoryItem item, Company company){
+        if(item.getAddedItems()>0){
+            double bal = item.getAddedItems() * item.getPurchasePrice();
+            Purchase p = new Purchase();
+            p.setBalance(bal);
+            p.setCompany(company);
+            p.setAmountPaid(0.0);
+            p.setCurrency(item.getCurrency());
+            p.setIsStockUpdated(Boolean.TRUE);
+            p.setActive(Boolean.TRUE);
+            p.setTotalAmount(bal);
+            p.setOtherCharge(0.0);
+            p.setSupplier(item.getSupplier());
+            p.setTotalAmountPaid(0.0);
+            p.setDiscountOnAll(0.0);
+            p.setDiscountOnAllTotal(0.0);
+            p.setPurchaseCost(bal);
+            p.setPurchaseDate(new Date());
+            p.setPurchaseItems(purchaseItem(item));
+            p.setQuantities(item.getAddedItems());
+            p.setStatus(PurchaseStatus.RECEIVED);
+            purchaseService.save(p);           
+        }
+    }
+    
+    private  Set<PurchaseItem> purchaseItem(InventoryItem item){
+        Set<PurchaseItem> items = new HashSet<>();
+        double bal = item.getAddedItems() * item.getPurchasePrice();
+        PurchaseItem p = new PurchaseItem();
+        p.setProfitMargin(item.getProfitMargin());
+        p.setDiscount(0.0);
+        p.setPriceWithoutTax(item.getPriceWithoutTax());
+        p.setPurchasePrice(item.getPurchasePrice());
+        p.setTotalAmount(bal);
+        p.setQuantity(item.getAddedItems());
+        p.setSellingPrice(item.getSellingPrice());
+        p.setInventoryItem(item);
+        items.add(p);
+        return items;
+        
+        
     }
 }

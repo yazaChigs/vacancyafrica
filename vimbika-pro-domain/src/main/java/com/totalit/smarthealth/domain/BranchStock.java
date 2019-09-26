@@ -5,7 +5,6 @@
  */
 package com.totalit.smarthealth.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +23,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class BranchStock extends BaseEntity{
     String companyId;
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
+    @DBRef
+    private Branch from;
     @DBRef
     private Branch branch;
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})

@@ -108,4 +108,9 @@ public class BranchServiceImpl implements BranchService{
     public Branch findByUuid(String uuid) {
         return repo.findByUuid(uuid);
     }
+
+    @Override
+    public Branch getDefaultBranch(Company company) {
+        return repo.findTopByCompanyAndIsDefaultAndActive(company, Boolean.TRUE, Boolean.TRUE);
+    }
 }

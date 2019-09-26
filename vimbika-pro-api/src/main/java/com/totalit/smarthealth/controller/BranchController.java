@@ -7,6 +7,7 @@ package com.totalit.smarthealth.controller;
 
 import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.Branch;
+import com.totalit.smarthealth.domain.User;
 import com.totalit.smarthealth.service.CompanyService;
 import com.totalit.smarthealth.service.BranchService;
 import com.totalit.smarthealth.service.UserService;
@@ -80,6 +81,24 @@ public class BranchController {
         logger.info("Retrieving All Branchs By Company{}");
         Company c = EndPointUtil.getCompany(company);
         return new ResponseEntity<>(service.getAll(c), HttpStatus.OK);
+    }
+    @GetMapping("/user-branch")
+    @ApiOperation("Return User Branch as a List")
+    public ResponseEntity<?> getUserBranch(@RequestHeader(value = "Company") String company) {
+        logger.info("Setting Current User Branch as Default");
+        Company c = EndPointUtil.getCompany(company);
+        User user = userService.getCurrentUser();        
+        List<Branch> list = service.getAll(c);
+        list.forEach((b) -> {
+            if(user.getBranch()!=null){
+                if(b.getId().equals(user.getBranch().getId())){
+                    b.setIsDefault(Boolean.TRUE);
+                } else{
+                    b.setIsDefault(Boolean.FALSE); 
+                }
+            } 
+        }); 
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
     @GetMapping("/get-item/{id}")
     @ApiOperation(value = "Returns Branch of Id passed as parameter", response = Branch.class)
