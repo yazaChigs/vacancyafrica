@@ -24,5 +24,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserRoleRepo extends AbstractNameDescRepo<UserRole, String> {
-   
+   Long countByActive(Boolean active);
 }

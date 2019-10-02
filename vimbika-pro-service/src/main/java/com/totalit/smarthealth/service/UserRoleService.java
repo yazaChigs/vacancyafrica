@@ -27,5 +27,5 @@ import com.totalit.smarthealth.domain.UserRole;
  * @author Judge Muzinda
  */
 public interface UserRoleService extends GenericNameService<UserRole> {
-    
+    Long countByActive(Boolean active);
 }

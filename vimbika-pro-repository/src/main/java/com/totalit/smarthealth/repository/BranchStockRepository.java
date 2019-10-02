@@ -19,5 +19,5 @@ import org.springframework.stereotype.Repository;
 public interface BranchStockRepository extends AbstractRepo<BranchStock, String> {
     List<BranchStock> findByBranchAndItem(Branch branch, InventoryItem item);
     List<BranchStock> findByCompanyId(String id);
-    BranchStock findTopByBranchAndItemAndActive(Branch branch,InventoryItem item, Boolean active);
+    BranchStock findTopByBranchAndItemAndActiveOrderByDateCreatedDesc(Branch branch, InventoryItem item, Boolean active);
 }

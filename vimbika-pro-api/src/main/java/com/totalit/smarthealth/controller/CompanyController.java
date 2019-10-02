@@ -189,7 +189,7 @@ public class CompanyController {
         expenseCategory.setDescription("Expense Category for all purchases.");
         expenseCategoryService.save(expenseCategory);
         Branch branch = new Branch();
-        branch.setName("Main Branch");
+        branch.setName("MAIN_BRANCH");
         branch.setActive(Boolean.TRUE);
         branch.setIsDefault(Boolean.TRUE);
         branch.setCity(company.getCity());

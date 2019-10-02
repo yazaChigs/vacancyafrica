@@ -92,4 +92,9 @@ public class UserRoleServiceImpl implements UserRoleService {
     public Boolean checkDuplicate(UserRole current, UserRole old) {
         return userRoleRepo.existsByNameIgnoreCaseAndActive(current.getName(), Boolean.TRUE);
     }
+    @Override
+    public Long countByActive(Boolean active) {
+        return userRoleRepo.countByActive(active);
+    }
+    
 }

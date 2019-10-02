@@ -204,6 +204,11 @@ public class BaseNameController {
             response.put("list", list);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
+        else if(type.equalsIgnoreCase(BaseNameType.PERMISSION.toString())){
+           List<Permission> list = permissionService.getAll();            
+           response.put("list", list);
+           return new ResponseEntity<>(response, HttpStatus.OK); 
+        }
         else if(type.equalsIgnoreCase(BaseNameType.ROLE.toString())){
            List<UserRole> list = roleService.getAll();            
            response.put("list", list);

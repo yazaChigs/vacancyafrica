@@ -15,4 +15,5 @@ import java.util.List;
  */
 public interface CustomerService extends GenericCompanyService<Customer>{
     List<Customer> lastTenCustomers(Company company);
+    List<Customer> findTopCustomers(Company company);
 }

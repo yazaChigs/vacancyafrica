@@ -22,4 +22,5 @@ public interface SaleService extends GenericCompanyService<Sale>{
     Long countByCompanyAndDateCreatedAndSaleStatus(Company company, Date date, SaleStatus saleStatus);   
     List<Sale> findSaleByDateCreated(Date date, Company company);
     List<Sale> findBySearchSaleDto(SaleDynamicQuery searchSaleDto);
+   // List<Sale> findTopCustomers(SaleDynamicQuery searchSaleDto);
 }

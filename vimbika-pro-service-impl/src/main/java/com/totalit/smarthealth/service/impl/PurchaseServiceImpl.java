@@ -36,7 +36,7 @@ public class PurchaseServiceImpl implements PurchaseService{
     
     @Override
     public List<Purchase> getByCompany(Company company) {
-       return repo.findByActiveAndCompany(Boolean.TRUE, company);
+       return repo.findByActiveAndCompanyOrderByDateCreatedDesc(Boolean.TRUE, company);
     }
 
     @Override

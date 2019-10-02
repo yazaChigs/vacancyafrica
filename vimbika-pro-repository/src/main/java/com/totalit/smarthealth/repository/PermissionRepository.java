@@ -14,5 +14,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface PermissionRepository extends AbstractNameDescRepo<Permission, String>{
-    
+    Long countByActive(Boolean active);
 }

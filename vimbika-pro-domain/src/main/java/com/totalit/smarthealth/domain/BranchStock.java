@@ -32,4 +32,5 @@ public class BranchStock extends BaseEntity{
     private InventoryItem item;
     private Long transfered = 0l;
     private Long stock = 0l;
+    private Long saleCount = 0l;
 }

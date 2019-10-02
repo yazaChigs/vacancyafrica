@@ -5,15 +5,20 @@
  */
 package com.totalit.smarthealth.controller;
 
-import com.totalit.smarthealth.domain.Account;
+import com.totalit.smarthealth.domain.Branch;
+import com.totalit.smarthealth.domain.BranchStock;
 import com.totalit.smarthealth.domain.Company;
+import com.totalit.smarthealth.domain.Currency;
+import com.totalit.smarthealth.domain.Customer;
 import com.totalit.smarthealth.domain.InventoryItem;
 import com.totalit.smarthealth.domain.PaymentReceived;
-import com.totalit.smarthealth.domain.PaymentType;
 import com.totalit.smarthealth.domain.Sale;
 import com.totalit.smarthealth.domain.util.SaleStatus;
 import com.totalit.smarthealth.service.AccountService;
+import com.totalit.smarthealth.service.BranchStockService;
 import com.totalit.smarthealth.service.CompanyService;
+import com.totalit.smarthealth.service.CurrencyService;
+import com.totalit.smarthealth.service.CustomerService;
 import com.totalit.smarthealth.service.InventoryItemService;
 import com.totalit.smarthealth.service.PaymentReceivedService;
 import com.totalit.smarthealth.service.SaleService;
@@ -63,6 +68,12 @@ public class SaleController {
     private InventoryItemService inventoryItemService;
     @Autowired
     private PaymentReceivedService paymentReceivedService;
+    @Autowired
+    private BranchStockService branchStockService;
+    @Autowired
+    private CustomerService customerService;
+    @Autowired
+    private CurrencyService currencyService;
     
     @PostMapping("/save")
     @ApiOperation("Persists Sale to Collection")
@@ -93,7 +104,8 @@ public class SaleController {
             }
             sale.setTimeIniated(DateUtil.getLocalDateTimeFromString(sale.getTimeInit()));
             Sale s = saleService.save(sale);
-            deductStock(sale.getSaleItems());
+            amountSpent(sale);
+            deductStock(sale.getSaleItems(), s.getBranch());
 //            // Credit Company Account 
 //            if(sale.getSaleStatus().equals(SaleStatus.COMPLETE)){
 //                if(s!=null){
@@ -144,11 +156,34 @@ public class SaleController {
         return new ResponseEntity<>(saleService.findSaleByDateCreated(d, c), HttpStatus.OK);
     }
     
-    public void deductStock(Set<InventoryItem> items){
-        for(InventoryItem item: items){
-            InventoryItem inventoryItem = inventoryItemService.get(item.getId());
-            inventoryItem.setAvailableItems(inventoryItem.getAvailableItems() - item.getQuantity());
-            inventoryItemService.save(inventoryItem);
+    public void deductStock(Set<InventoryItem> items, Branch branch){
+        if(branch.getName().equalsIgnoreCase("MAIN_BRANCH")){
+            for(InventoryItem item: items){
+                InventoryItem inventoryItem = inventoryItemService.get(item.getId());
+                inventoryItem.setAvailableItems(inventoryItem.getAvailableItems() - item.getQuantity());
+                inventoryItem.setSaleCount(inventoryItem.getSaleCount() + item.getQuantity());
+                inventoryItemService.save(inventoryItem);
+            }
+        }else{
+           for(InventoryItem item: items){
+                BranchStock branchStock = branchStockService.getBranchInventoryItem(branch, item, Boolean.TRUE);
+                InventoryItem inventoryItem = inventoryItemService.get(item.getId());
+                inventoryItem.setSaleCount(inventoryItem.getSaleCount() + item.getQuantity());
+                InventoryItem i = inventoryItemService.save(inventoryItem);
+                branchStock.setStock(branchStock.getStock() - item.getQuantity());
+                branchStock.setSaleCount(branchStock.getSaleCount() + item.getQuantity());
+                branchStock.setItem(i);
+                branchStockService.save(branchStock);
+                
+           } 
+        }
+    }
+    private void amountSpent(Sale sale){
+        if(sale.getCustomer()!=null){
+            Customer customer = customerService.get(sale.getCustomer().getId());
+            double amt = sale.getAmountAfterDiscount()/sale.getCurrency().getRate();
+            customer.setAmountSpent(customer.getAmountSpent() + amt);
+            customerService.save(customer);
         }
     }
 }

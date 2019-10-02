@@ -31,6 +31,9 @@ public class Sale extends BaseCompany{
     @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
     @DBRef
     private Customer customer;
+    @JsonIgnoreProperties({ "active", "deleted", "createdById", "uuid", "version", "dateCreated", "dateModified"})
+    @DBRef
+    private Branch branch;
     private Boolean isWalkInCustomer;
     private LocalDateTime timeIniated;
     @Transient

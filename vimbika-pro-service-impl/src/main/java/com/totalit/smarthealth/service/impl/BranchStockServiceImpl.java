@@ -104,6 +104,6 @@ public class BranchStockServiceImpl implements BranchStockService{
 
     @Override
     public BranchStock getBranchInventoryItem(Branch branch, InventoryItem item, Boolean active) {
-        return repo.findTopByBranchAndItemAndActive(branch, item, active);
+        return repo.findTopByBranchAndItemAndActiveOrderByDateCreatedDesc(branch, item, active);
     }
 }

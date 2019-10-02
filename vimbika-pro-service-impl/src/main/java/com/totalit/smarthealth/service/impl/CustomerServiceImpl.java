@@ -7,6 +7,7 @@ package com.totalit.smarthealth.service.impl;
 
 import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.Customer;
+import com.totalit.smarthealth.domain.InventoryItem;
 import com.totalit.smarthealth.repository.CustomerRepository;
 import com.totalit.smarthealth.service.CustomerService;
 import com.totalit.smarthealth.service.UserService;
@@ -17,8 +18,6 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -131,6 +130,16 @@ public class CustomerServiceImpl implements CustomerService{
         query.with(new Sort(Sort.Direction.DESC, "dateCreated"));
         query.limit(10);
         //query.with(pageableRequest);
+        query.addCriteria(Criteria.where("company").is(company));
+        query.addCriteria(Criteria.where("active").is(true));
+        return mongoTemplate.find(query, Customer.class);
+    }
+
+    @Override
+    public List<Customer> findTopCustomers(Company company) {
+         Query query = new Query();
+        query.with(new Sort(Sort.Direction.DESC, "amountSpent"));
+        query.limit(10);
         query.addCriteria(Criteria.where("company").is(company));
         query.addCriteria(Criteria.where("active").is(true));
         return mongoTemplate.find(query, Customer.class);

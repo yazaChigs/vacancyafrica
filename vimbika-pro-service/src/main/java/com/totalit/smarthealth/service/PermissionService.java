@@ -12,5 +12,5 @@ import com.totalit.smarthealth.domain.Permission;
  * @author roy
  */
 public interface PermissionService extends GenericNameService<Permission> {
-    
+    Long countByActive(Boolean active);
 }

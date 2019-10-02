@@ -12,5 +12,5 @@ import com.totalit.smarthealth.domain.Module;
  * @author roy
  */
 public interface ModuleService extends GenericNameService<Module> {
-    
+    Long countByActive(Boolean active);
 }

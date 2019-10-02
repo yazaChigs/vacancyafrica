@@ -20,4 +20,5 @@ public interface InventoryItemService extends GenericCompanyService<InventoryIte
     List<InventoryItem> findByCompanyAndActiveAndItemCodeLike(Company company, Boolean active, String itemCode);
     List<InventoryItem> findByCompanyAndActiveAndCategory(Company company, Boolean active, Category category);
     List<InventoryItem> findByCompanyAndActiveAndBrand(Company company, Boolean active, Brand brand);
+    List<InventoryItem> findMostSoldItems(Company company);
 }

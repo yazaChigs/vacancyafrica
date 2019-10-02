@@ -60,7 +60,7 @@ public class SaleServiceImpl implements SaleService{
      
     @Override
     public List<Sale> getByCompany(Company company) {
-       return repo.findByActiveAndCompany(Boolean.TRUE, company);
+       return repo.findByActiveAndCompanyOrderByDateCreatedDesc(Boolean.TRUE, company);
     }
 
     @Override
@@ -214,4 +214,6 @@ public class SaleServiceImpl implements SaleService{
         }
         return null;
     }
+
+   
 }

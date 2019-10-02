@@ -14,5 +14,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ModuleRepository extends AbstractNameDescRepo<Module, String>{
-    
+    Long countByActive(Boolean active);
 }

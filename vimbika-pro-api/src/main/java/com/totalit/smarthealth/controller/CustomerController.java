@@ -72,6 +72,13 @@ public class CustomerController {
         response.put("message", "Customer Saved Successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @GetMapping("/top")
+    @ApiOperation("Returns 10 Top Customers")
+    public ResponseEntity<?> getTopCustomers(@RequestHeader(value = "Company") String company) {
+        logger.info("Retrieving Top Customers{}");
+        Company c = EndPointUtil.getCompany(company);
+        return new ResponseEntity<>(service.findTopCustomers(c), HttpStatus.OK);
+    }
     @GetMapping("/get-all")
     @ApiOperation("Returns All Customers")
     public ResponseEntity<?> getAll(@RequestHeader(value = "Company") String company) {

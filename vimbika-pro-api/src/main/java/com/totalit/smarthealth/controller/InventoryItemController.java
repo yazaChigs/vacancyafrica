@@ -13,6 +13,7 @@ import com.totalit.smarthealth.domain.ProductImage;
 import com.totalit.smarthealth.domain.InventoryItem;
 import com.totalit.smarthealth.domain.Purchase;
 import com.totalit.smarthealth.domain.PurchaseItem;
+import com.totalit.smarthealth.domain.User;
 import com.totalit.smarthealth.domain.util.PurchaseStatus;
 import com.totalit.smarthealth.service.BranchService;
 import com.totalit.smarthealth.service.BranchStockService;
@@ -28,6 +29,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -109,6 +111,13 @@ public class InventoryItemController {
         response.put("message", "InventoryItem Saved Successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @GetMapping("/item/most-sold")
+    @ApiOperation("Returns All Expenses")
+    public ResponseEntity<?> getMostSold(@RequestHeader(value = "Company") String company) {
+        logger.info("Retrieving Most Sold Items{}");
+        Company c = EndPointUtil.getCompany(company);
+        return new ResponseEntity<>(service.findMostSoldItems(c), HttpStatus.OK);
+    }
     @GetMapping("/items/get-all")
     @ApiOperation("Returns All InventoryItems")
     public ResponseEntity<?> getAll(@RequestHeader(value = "Company") String company) {
@@ -118,20 +127,82 @@ public class InventoryItemController {
         Currency currency = currencyService.getBaseCurrency(c);
         if(currency !=null){
             list.forEach(item ->{
-                double rate = (100 + item.getProfitMargin())/100;
-                if(item.getCurrency() != null){ //Currency is not null for inventory item                    
-                    if(!item.getCurrency().getId().equalsIgnoreCase(currency.getId())){ //Currency for this inventory item should not be equal to base currency for it to be calculated                       
-                        item.setSellingPrice(AppUtil.roundNumber(item.getPurchasePrice() * rate * currency.getRate()));
-                        item.setCurrency(currency);
-                    }
-                }else { // If Inventory Item Currency is null, calculate selling price using base Currency
-                        item.setSellingPrice(AppUtil.roundNumber(item.getPurchasePrice() * rate * currency.getRate()));
-                        item.setCurrency(currency);
-                    }
-                
+                setCurrency(item, currency);
+//                double rate = (100 + item.getProfitMargin())/100;
+//                if(item.getCurrency() != null){ //Currency is not null for inventory item                    
+//                    if(!item.getCurrency().getId().equalsIgnoreCase(currency.getId())){ //Currency for this inventory item should not be equal to base currency for it to be calculated                       
+//                        item.setSellingPrice(AppUtil.roundNumber(item.getPurchasePrice() * rate * currency.getRate()));
+//                        item.setCurrency(currency);
+//                    }
+//                }else { // If Inventory Item Currency is null, calculate selling price using base Currency
+//                        item.setSellingPrice(AppUtil.roundNumber(item.getPurchasePrice() * rate * currency.getRate()));
+//                        item.setCurrency(currency);
+//                    }
+//                
             });
         }
         return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+    @GetMapping("/items/pos")
+    @ApiOperation("Returns All InventoryItems")
+    public ResponseEntity<?> getAll(@RequestHeader(value = "Company") String company, @RequestParam("branchId") String branchId) {
+        logger.info("Retrieving All InventoryItems By Company{}");
+        Company c = EndPointUtil.getCompany(company);
+       
+        List<InventoryItem> list = service.getByCompany(c);
+
+        Currency currency = currencyService.getBaseCurrency(c);
+        if (currency != null) {
+            for (InventoryItem item : list) {
+                setCurrency(item, currency);
+            }
+        }
+        return new ResponseEntity<>(getBranchItems(list, c), HttpStatus.OK);
+          
+    }
+    @GetMapping("/items/branch")
+    @ApiOperation("Returns All InventoryItems")
+    public ResponseEntity<?> getByBranch(@RequestHeader(value = "Company") String company, @RequestParam("branchId") String branchId) {
+        logger.info("Retrieving All InventoryItems By Company{}");
+        Company c = EndPointUtil.getCompany(company);
+        Branch br = branchService.getDefaultBranch(c);
+        Branch branch = branchService.get(branchId);
+       List<InventoryItem> stocks = new ArrayList<>();
+        List<InventoryItem> list = service.getByCompany(c);
+        if(!br.getId().equalsIgnoreCase(branchId)){
+        for (InventoryItem item : list) {
+            BranchStock branchStock = branchStockService.getBranchInventoryItem(branch, item, Boolean.TRUE);
+            if (branchStock != null) {
+                item.setAvailableItems(branchStock.getStock());
+                stocks.add(item);
+            }
+        }
+        return new ResponseEntity<>(stocks, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(list, HttpStatus.OK);
+
+    }
+    private List<InventoryItem> getBranchItems(List<InventoryItem> list, Company c) {
+        List<InventoryItem> stocks = new ArrayList<>();
+        User user = userService.getCurrentUser();
+        Branch b;
+        Branch branch = branchService.getDefaultBranch(c);
+        if(user.getBranch()!=null){
+            b = user.getBranch();
+        }else{
+            b = branch;
+        }
+        if(!b.getId().equalsIgnoreCase(branch.getId())){
+        for (InventoryItem item : list) {
+            BranchStock branchStock = branchStockService.getBranchInventoryItem(b, item, Boolean.TRUE);
+            if (branchStock != null) {
+                item.setAvailableItems(branchStock.getStock());
+                stocks.add(item);
+            }
+        }
+        return stocks;
+        }
+        return list;
     }
     @GetMapping("/item/get-item/{id}")
     @ApiOperation(value = "Returns InventoryItem of Id passed as parameter", response = InventoryItem.class)
@@ -139,27 +210,16 @@ public class InventoryItemController {
         Company c = EndPointUtil.getCompany(company);
         InventoryItem item = service.get(id);
         Currency currency = currencyService.getBaseCurrency(c);
-        if (currency != null) {
-            double rate = (100+item.getProfitMargin())/100;
-            if (item.getCurrency() != null) {
-                if (!item.getCurrency().getId().equalsIgnoreCase(currency.getId())) {
-                    item.setSellingPrice(AppUtil.roundNumber(item.getPurchasePrice() * rate * currency.getRate()));
-                    item.setCurrency(currency);
-                }
-            } else{
-                item.setSellingPrice(AppUtil.roundNumber(item.getPurchasePrice() * rate * currency.getRate()));
-                item.setCurrency(currency);
-            }
-        }
+        item = setCurrency(item, currency);
         return new ResponseEntity<>(item, HttpStatus.OK);
     }
     @GetMapping("/item/branch/{itemId}/{branchId}")
     @ApiOperation(value = "Returns Branch Stock of Item Id and Branch Id passed as parameter", response = InventoryItem.class)
-    public ResponseEntity<Long> getBranchItem(@RequestHeader(value = "Company") String company,
+    public ResponseEntity<Long> getBranchItem(
             @ApiParam(name = "id", value = "Item Id used to fetch the object")
             @PathVariable("itemId") String itemId,
             @PathVariable("branchId") String branchId) {
-        Company c = EndPointUtil.getCompany(company);
+        logger.info("Returns current stock of item at  branch passed as parameter");
         InventoryItem item = service.get(itemId);
         Branch branch =  branchService.get(branchId);
         List<BranchStock> branchStock = branchStockService.findByBranchAndItem(branch, item);    
@@ -177,16 +237,17 @@ public class InventoryItemController {
 
             list.forEach(item ->{
                 if(item.getItem()!=null){
-                double rate = (100+item.getItem().getProfitMargin())/100;
-                if(item.getItem().getCurrency() != null){ //Currency is not null for inventory item                    
-                    if(!item.getItem().getCurrency().getId().equalsIgnoreCase(currency.getId())){ //Currency for this inventory item should not be equal to base currency for it to be calculated                       
-                        item.getItem().setSellingPrice(AppUtil.roundNumber(item.getItem().getPurchasePrice() * rate * currency.getRate()));
-                        item.getItem().setCurrency(currency);
-                    }
-                }else { // If Inventory Item Currency is null, calculate selling price using base Currency
-                        item.getItem().setSellingPrice(AppUtil.roundNumber(item.getItem().getPurchasePrice() * rate * currency.getRate()));
-                        item.getItem().setCurrency(currency);
-                    }
+                    setCurrency(item.getItem(), currency);
+//                double rate = (100+item.getItem().getProfitMargin())/100;
+//                if(item.getItem().getCurrency() != null){ //Currency is not null for inventory item                    
+//                    if(!item.getItem().getCurrency().getId().equalsIgnoreCase(currency.getId())){ //Currency for this inventory item should not be equal to base currency for it to be calculated                       
+//                        item.getItem().setSellingPrice(AppUtil.roundNumber(item.getItem().getPurchasePrice() * rate * currency.getRate()));
+//                        item.getItem().setCurrency(currency);
+//                    }
+//                }else { // If Inventory Item Currency is null, calculate selling price using base Currency
+//                        item.getItem().setSellingPrice(AppUtil.roundNumber(item.getItem().getPurchasePrice() * rate * currency.getRate()));
+//                        item.getItem().setCurrency(currency);
+//                    }
                 }  
             });
    
@@ -194,12 +255,17 @@ public class InventoryItemController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
     @PostMapping("/item/branch-stock/save")
-    @ApiOperation("Persists InventoryItem to Collection")
+    @ApiOperation("Transfer Stock")
     public ResponseEntity<Map<String, Object>> saveBranchStock(@RequestHeader(value = "Company") String company, @RequestBody BranchStock branchStock) {
         Map<String, Object> response = new HashMap<>();
 
         try{
+           
            InventoryItem inventoryItem = service.get(branchStock.getItem().getId());
+           BranchStock current = branchStockService.getBranchInventoryItem(branchStock.getBranch(), inventoryItem, Boolean.TRUE);
+           if(current!=null){
+               branchStock.setSaleCount(current.getSaleCount());
+           }
            inventoryItem.setAvailableItems(inventoryItem.getAvailableItems() - branchStock.getTransfered());
            InventoryItem in = service.save(inventoryItem);
            response.put("inventory", in);
@@ -321,8 +387,24 @@ public class InventoryItemController {
         p.setSellingPrice(item.getSellingPrice());
         p.setInventoryItem(item);
         items.add(p);
-        return items;
+        return items;       
+    }
+
+    private InventoryItem setCurrency(InventoryItem item, Currency currency) {
+        if (currency != null) {
+            double margin = item.getProfitMargin() == null ? 0.0 : item.getProfitMargin();
+            double rate = (100+margin)/100;
+            if (item.getCurrency() != null) {//Currency is not null for inventory item 
+                if (!item.getCurrency().getId().equalsIgnoreCase(currency.getId())) { //Currency for this inventory item should not be equal to base currency for it to be calculated
+                    item.setSellingPrice(AppUtil.roundNumber(item.getPurchasePrice() * rate * currency.getRate()));
+                    item.setCurrency(currency);
+                }
+            } else{// If Inventory Item Currency is null, calculate selling price using base Currency
+                item.setSellingPrice(AppUtil.roundNumber(item.getPurchasePrice() * rate * currency.getRate()));
+                item.setCurrency(currency);
+            }
+        }
         
-        
+        return item;
     }
 }

@@ -33,4 +33,5 @@ public class Customer extends BaseCompany{
     private String officePhone;
     private String website;
     private String taxNumber;
+    private double amountSpent = 0.0;
 }

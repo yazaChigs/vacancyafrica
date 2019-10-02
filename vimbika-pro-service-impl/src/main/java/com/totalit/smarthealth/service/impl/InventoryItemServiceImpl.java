@@ -19,6 +19,10 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,12 +37,18 @@ public class InventoryItemServiceImpl implements InventoryItemService{
      final Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
     @Autowired
     private InventoryItemRepository repo;
+    private final MongoTemplate mongoTemplate;
     
      @Resource
     private UserService userService;
+     
+     @Autowired
+    public InventoryItemServiceImpl(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
     @Override
     public List<InventoryItem> getByCompany(Company company) {
-       return repo.findByActiveAndCompany(Boolean.TRUE, company);
+       return repo.findByActiveAndCompanyOrderByDateCreatedDesc(Boolean.TRUE, company);
     }
 
     @Override
@@ -128,6 +138,17 @@ public class InventoryItemServiceImpl implements InventoryItemService{
     @Override
     public List<InventoryItem> findByCompanyAndActiveAndBrand(Company company, Boolean active, Brand brand) {
         return repo.findByCompanyAndActiveAndBrand(company, active, brand);
+    }
+
+    @Override
+    public List<InventoryItem> findMostSoldItems(Company company) {
+        Query query = new Query();
+        query.with(new Sort(Sort.Direction.DESC, "saleCount"));
+        query.limit(10);
+        //query.with(pageableRequest);
+        query.addCriteria(Criteria.where("company").is(company));
+        query.addCriteria(Criteria.where("active").is(true));
+        return mongoTemplate.find(query, InventoryItem.class);
     }
     
 }

@@ -36,7 +36,7 @@ public class ExpenseServiceImpl implements ExpenseService{
     private UserService userService;
     @Override
     public List<Expense> getByCompany(Company company) {
-       return repo.findByActiveAndCompany(Boolean.TRUE, company);
+       return repo.findByActiveAndCompanyOrderByDateCreatedDesc(Boolean.TRUE, company);
     }
 
     @Override

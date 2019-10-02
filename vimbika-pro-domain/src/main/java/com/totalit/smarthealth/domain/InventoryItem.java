@@ -62,5 +62,6 @@ public class InventoryItem extends BaseCompany{
     private Long quantity;
     private double total;
     private List<ProductImage> productImages = new ArrayList<>();
+    private Long saleCount = 0l;
     
 }
