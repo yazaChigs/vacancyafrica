@@ -7,16 +7,16 @@
         <version>2.1.6.RELEASE</version>
     </parent>
     <groupId>com.totalit</groupId>
-    <artifactId>vimbika-pro</artifactId>
-    <name>vimbika-pro</name>
+    <artifactId>eforms-pro</artifactId>
+    <name>eforms-pro</name>
     <version>0</version>
     <packaging>pom</packaging>
     <modules>
-        <module>vimbika-pro-api</module>
-        <module>vimbika-pro-domain</module>
-        <module>vimbika-pro-repository</module>
-        <module>vimbika-pro-service</module>
-        <module>vimbika-pro-service-impl</module>
+        <module>eforms-pro-api</module>
+        <module>eforms-pro-domain</module>
+        <module>eforms-pro-repository</module>
+        <module>eforms-pro-service</module>
+        <module>eforms-pro-service-impl</module>
     </modules>
     <dependencies>
 
