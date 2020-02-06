@@ -1,3 +1,4 @@
+/Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-repository/src/main/java/com/totalit/smarthealth/repository/ApplicationFormRepo.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-repository/src/main/java/com/totalit/smarthealth/repository/PaymentReceivedRepository.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-repository/src/main/java/com/totalit/smarthealth/repository/BranchRepository.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-repository/src/main/java/com/totalit/smarthealth/repository/UnitRepository.java
@@ -18,13 +19,14 @@
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-repository/src/main/java/com/totalit/smarthealth/repository/ExpenseCategoryRepository.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-repository/src/main/java/com/totalit/smarthealth/repository/PurchaseRepository.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-repository/src/main/java/com/totalit/smarthealth/repository/AccountRepository.java
+/Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-repository/src/main/java/com/totalit/smarthealth/repository/VisitorRepository.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-repository/src/main/java/com/totalit/smarthealth/repository/PaymentRepository.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-repository/src/main/java/com/totalit/smarthealth/repository/AbstractNameDescRepo.java
+/Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-repository/src/main/java/com/totalit/smarthealth/repository/AdvertRepo.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-repository/src/main/java/com/totalit/smarthealth/repository/InventoryItemRepository.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-repository/src/main/java/com/totalit/smarthealth/repository/EmailRepository.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-repository/src/main/java/com/totalit/smarthealth/repository/CompanyRepository.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-repository/src/main/java/com/totalit/smarthealth/repository/AbstractRepo.java
-/Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-repository/src/main/java/com/totalit/smarthealth/repository/AnswerFormRepo.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-repository/src/main/java/com/totalit/smarthealth/repository/CustomerRepository.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-repository/src/main/java/com/totalit/smarthealth/repository/BrandRepository.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-repository/src/main/java/com/totalit/smarthealth/repository/CategoryRepository.java

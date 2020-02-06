@@ -16,8 +16,8 @@
 package com.totalit.smarthealth.repository;
 
 
-import com.totalit.smarthealth.domain.AnswerForm;
-import com.totalit.smarthealth.domain.CreateForm;
+import com.totalit.smarthealth.domain.Advert;
+import com.totalit.smarthealth.domain.ApplicationForm;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -25,5 +25,5 @@ import org.springframework.stereotype.Repository;
  * @author Roy kanavheti
  */
 @Repository
-public interface AnswerFormRepo extends AbstractRepo<AnswerForm , String >{
+public interface AdvertRepo extends AbstractCompanyRepository<Advert, String >{
 }

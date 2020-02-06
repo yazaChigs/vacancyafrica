@@ -1,10 +1,12 @@
 com/totalit/smarthealth/service/impl/PermissionServiceImpl.class
 com/totalit/smarthealth/service/impl/PaymentServiceImpl.class
+com/totalit/smarthealth/service/impl/AdvertServiceImpl.class
 com/totalit/smarthealth/service/impl/PaymentTypeServiceImpl.class
+com/totalit/smarthealth/service/impl/VisitorServiceImpl.class
 com/totalit/smarthealth/service/impl/ExpenseCategoryServiceImpl.class
+com/totalit/smarthealth/service/impl/ApplicationFormServiceImpl.class
 com/totalit/smarthealth/service/impl/ModuleServiceImpl.class
 com/totalit/smarthealth/service/impl/TaxServiceImpl.class
-com/totalit/smarthealth/service/impl/AnswerFormServiceImpl.class
 com/totalit/smarthealth/service/impl/BranchServiceImpl.class
 com/totalit/smarthealth/service/impl/AccountServiceImpl.class
 com/totalit/smarthealth/service/impl/SupplierServiceImpl.class

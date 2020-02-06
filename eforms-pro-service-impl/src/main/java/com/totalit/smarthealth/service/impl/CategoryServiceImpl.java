@@ -30,32 +30,26 @@ public class CategoryServiceImpl implements CategoryService{
     @Resource
     private UserService userService;
 
-    @Override
-    public Category getByNameAndCompany(String name, Company company) {
-        return repo.findByNameIgnoreCaseAndCompanyAndActive(name, company, Boolean.TRUE);
-    }
+//    @Override
+//    public Category getByNameAndCompany(String name) {
+//        return repo.findByActiveAndName( Boolean.TRUE,name);
+//    }
 
     @Override
-    public Boolean checkDuplicate(Category current, Category old, Company company) {
+    public Boolean checkDuplicate(Category current, Category old) {
         if(current.getId() == null){
-        return repo.existsByNameIgnoreCaseAndActiveAndCompany(current.getName(), Boolean.TRUE, company);
+        return repo.existsByNameIgnoreCaseAndActive(current.getName(), Boolean.TRUE);
         }
         old = get(current.getId());
         if(!current.getName().equalsIgnoreCase(old.getName())){
-             return repo.existsByNameIgnoreCaseAndActiveAndCompany(current.getName(), Boolean.TRUE, company);
+             return repo.existsByNameIgnoreCaseAndActive(current.getName(), Boolean.TRUE);
         }else{
            return Boolean.FALSE;
         }
     }
-
-    @Override
-    public List<Category> getAll(Company company) {
-         return repo.findByCompanyAndActive(company, Boolean.TRUE);
-    }
-
     @Override
     public List<Category> getAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+      return  repo.findByActive(Boolean.TRUE); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -89,10 +83,10 @@ public class CategoryServiceImpl implements CategoryService{
         return repo.save(t);
     }
 
-    @Override
-    public Boolean checkDuplicate(Category current, Category old) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+//    @Override
+//    public Boolean checkDuplicate(Category current, Category old) {
+//       return repo.existsByNameIgnoreCaseAndActive(current.getName() , Boolean.TRUE); //To change body of generated methods, choose Tools | Templates.
+//    }
 
     @Override
     public List<Category> findByActiveAndDateModified(Boolean active, Date date) {
@@ -107,5 +101,15 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     public Category findByUuid(String uuid) {
         return repo.findByUuid(uuid);
+    }
+
+    @Override
+    public Long countByActive(Boolean active) {
+        return repo.countByActive(active);
+    }
+
+    @Override
+    public Category getByName(String name) {
+        return repo.findByActiveAndName(Boolean.TRUE,name);
     }
 }

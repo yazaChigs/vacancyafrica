@@ -7,8 +7,8 @@ com/totalit/smarthealth/repository/CustomerRepository.class
 com/totalit/smarthealth/repository/PaymentReceivedRepository.class
 com/totalit/smarthealth/repository/SaleRepository.class
 com/totalit/smarthealth/repository/PermissionRepository.class
+com/totalit/smarthealth/repository/AdvertRepo.class
 com/totalit/smarthealth/repository/TaxRepository.class
-com/totalit/smarthealth/repository/AnswerFormRepo.class
 com/totalit/smarthealth/repository/CreateFormRepo.class
 com/totalit/smarthealth/repository/UserRepo.class
 com/totalit/smarthealth/repository/ExpenseCategoryRepository.class
@@ -22,9 +22,11 @@ com/totalit/smarthealth/repository/CategoryRepository.class
 com/totalit/smarthealth/repository/BranchStockRepository.class
 com/totalit/smarthealth/repository/AbstractCompanyRepository.class
 com/totalit/smarthealth/repository/BrandRepository.class
+com/totalit/smarthealth/repository/ApplicationFormRepo.class
 com/totalit/smarthealth/repository/InventoryItemRepository.class
 com/totalit/smarthealth/repository/EmailRepository.class
 com/totalit/smarthealth/repository/UserRoleRepo.class
+com/totalit/smarthealth/repository/VisitorRepository.class
 com/totalit/smarthealth/repository/ExpenseRepository.class
 com/totalit/smarthealth/repository/AbstractRepo.class
 com/totalit/smarthealth/repository/CompanyRepository.class

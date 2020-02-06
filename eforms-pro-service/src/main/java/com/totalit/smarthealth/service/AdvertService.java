@@ -15,15 +15,15 @@
  */
 package com.totalit.smarthealth.service;
 
-import com.totalit.smarthealth.domain.AnswerForm;
-import com.totalit.smarthealth.domain.CreateForm;
+import com.totalit.smarthealth.domain.Advert;
+import com.totalit.smarthealth.domain.ApplicationForm;
 
 
 /**
  *
  * @author Roy kanavheti
  */
-public interface AnswerFormService extends GenericService<AnswerForm>  {
+public interface AdvertService extends GenericCompanyService<Advert>  {
 
 
     

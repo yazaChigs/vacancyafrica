@@ -5,13 +5,7 @@
  */
 package com.totalit.smarthealth.controller;
 
-import com.totalit.smarthealth.service.BranchService;
-import com.totalit.smarthealth.service.CurrencyService;
-import com.totalit.smarthealth.service.ExpenseCategoryService;
-import com.totalit.smarthealth.service.ModuleService;
-import com.totalit.smarthealth.service.PermissionService;
-import com.totalit.smarthealth.service.UserRoleService;
-import com.totalit.smarthealth.service.UserService;
+import com.totalit.smarthealth.service.*;
 import com.totalit.smarthealth.service.impl.StorageService;
 import io.swagger.annotations.ApiOperation;
 import java.util.HashMap;
@@ -43,6 +37,8 @@ public class SiteManagerController {
     private UserRoleService roleService;
     @Autowired
     private PermissionService permission;
+    @Autowired
+    private CategoryService categoryService;
    
      
       @GetMapping("/access")
@@ -57,6 +53,8 @@ public class SiteManagerController {
             response.put("modules", modules);
              long permissions = permission.countByActive(Boolean.TRUE);
             response.put("permissions", permissions);
+            long categories = categoryService.countByActive(Boolean.TRUE);
+            response.put("categories", categories);
             
         } catch (Exception ex) {
             response.put("message", ex.getMessage());

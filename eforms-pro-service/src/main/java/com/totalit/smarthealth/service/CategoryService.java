@@ -11,6 +11,6 @@ import com.totalit.smarthealth.domain.Category;
  *
  * @author roy
  */
-public interface CategoryService extends GenericNameCompanyService<Category>{
-    
+public interface CategoryService extends GenericNameService<Category>{
+    Long countByActive(Boolean active);
 }

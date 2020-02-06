@@ -26,9 +26,9 @@ import org.springframework.stereotype.Repository;
  * @author Roy kanavheti
  */
 @Repository
-public interface CreateFormRepo extends AbstractRepo<CreateForm , String >{
+public interface CreateFormRepo extends AbstractCompanyRepository<CreateForm , String >{
     public CreateForm findByActiveAndFormName(Boolean active, String formName);
-    public CreateForm findByActiveAndCompanyName(Boolean active, String companyName);
+    public CreateForm findByCompanyAndFormName(Company company, String formName);
 //    public Boolean existsByActiveAndUserNameIgnoreCase(Boolean active, String Name);
 //    public Boolean existsByActiveAndUserNameIgnoreCaseAndCompany(Boolean active, String userName, Company company);
 }

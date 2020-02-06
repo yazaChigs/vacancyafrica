@@ -135,8 +135,8 @@ public class BaseNameController {
             }
             else if(type.equalsIgnoreCase(BaseNameType.CATEGORY.toString())){
                 Category category = objectMapper.readValue(item, Category.class);
-                if(!categoryService.checkDuplicate(category, category, c)){
-                    category.setCompany(c);
+                if(!categoryService.checkDuplicate(category, category)){
+//                    category.setCompany(c);
                 Category r = categoryService.save(category);
                 itemMessage = "Category";
                 response.put("item", r); 
@@ -222,7 +222,7 @@ public class BaseNameController {
            return new ResponseEntity<>(response, HttpStatus.OK); 
         }
         else if(type.equalsIgnoreCase(BaseNameType.CATEGORY.toString())){
-           List<Category> list = categoryService.getAll(c);            
+           List<Category> list = categoryService.getAll();
            response.put("list", list);
            return new ResponseEntity<>(response, HttpStatus.OK); 
         }

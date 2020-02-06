@@ -1,11 +1,12 @@
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-service-impl/src/main/java/com/totalit/smarthealth/service/impl/PermissionServiceImpl.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-service-impl/src/main/java/com/totalit/smarthealth/service/impl/PaymentReceivedServiceImpl.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-service-impl/src/main/java/com/totalit/smarthealth/service/impl/BranchServiceImpl.java
-/Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-service-impl/src/main/java/com/totalit/smarthealth/service/impl/AnswerFormServiceImpl.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-service-impl/src/main/java/com/totalit/smarthealth/service/impl/EmailServiceImpl.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-service-impl/src/main/java/com/totalit/smarthealth/service/impl/PaymentTypeServiceImpl.java
+/Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-service-impl/src/main/java/com/totalit/smarthealth/service/impl/AdvertServiceImpl.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-service-impl/src/main/java/com/totalit/smarthealth/service/impl/CustomerServiceImpl.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-service-impl/src/main/java/com/totalit/smarthealth/service/impl/UserRoleServiceImpl.java
+/Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-service-impl/src/main/java/com/totalit/smarthealth/service/impl/VisitorServiceImpl.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-service-impl/src/main/java/com/totalit/smarthealth/service/impl/AccountServiceImpl.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-service-impl/src/main/java/com/totalit/smarthealth/service/impl/InventoryItemServiceImpl.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-service-impl/src/main/java/com/totalit/smarthealth/service/impl/BrandServiceImpl.java
@@ -25,3 +26,4 @@
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-service-impl/src/main/java/com/totalit/smarthealth/service/impl/UnitServiceImpl.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-service-impl/src/main/java/com/totalit/smarthealth/service/impl/ExpenseServiceImpl.java
 /Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-service-impl/src/main/java/com/totalit/smarthealth/service/impl/CreateFormServiceImpl.java
+/Users/machigere/vacancyafrica/vacancyafrica/eforms-pro-service-impl/src/main/java/com/totalit/smarthealth/service/impl/ApplicationFormServiceImpl.java

@@ -18,6 +18,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection="categories")
 @TypeAlias("category")
 @Getter @Setter @NoArgsConstructor
-public class Category extends BaseNameCompany{
+public class Category extends BaseName{
     
 }

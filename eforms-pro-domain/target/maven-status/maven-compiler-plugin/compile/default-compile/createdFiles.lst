@@ -13,7 +13,6 @@ com/totalit/smarthealth/domain/Supplier.class
 com/totalit/smarthealth/query/SaleDynamicQuery.class
 com/totalit/smarthealth/domain/Company.class
 com/totalit/smarthealth/domain/util/FormEntity.class
-com/totalit/smarthealth/domain/AnswerForm.class
 com/totalit/smarthealth/util/DateUtil.class
 com/totalit/smarthealth/domain/util/SaleStatus.class
 com/totalit/smarthealth/domain/util/EmailAuthentication.class
@@ -28,6 +27,7 @@ com/totalit/smarthealth/domain/Email.class
 com/totalit/smarthealth/domain/Branch.class
 com/totalit/smarthealth/domain/ProductImage.class
 com/totalit/smarthealth/domain/Tax.class
+com/totalit/smarthealth/domain/ApplicationForm.class
 com/totalit/smarthealth/query/CurrencyAmount.class
 com/totalit/smarthealth/domain/Permission.class
 com/totalit/smarthealth/domain/util/StringUtils.class
@@ -42,9 +42,11 @@ com/totalit/smarthealth/domain/PaymentReceived.class
 com/totalit/smarthealth/domain/UserRole.class
 com/totalit/smarthealth/domain/util/PurchaseStatus.class
 com/totalit/smarthealth/domain/Brand.class
+com/totalit/smarthealth/domain/Advert.class
 com/totalit/smarthealth/domain/Unit.class
 com/totalit/smarthealth/exceptions/NotFoundException.class
 com/totalit/smarthealth/domain/CreateForm.class
 com/totalit/smarthealth/domain/User.class
 com/totalit/smarthealth/domain/Expense.class
+com/totalit/smarthealth/domain/Visitor.class
 com/totalit/smarthealth/domain/BranchStock.class

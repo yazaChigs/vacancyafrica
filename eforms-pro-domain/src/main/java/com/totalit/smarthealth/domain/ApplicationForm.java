@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
@@ -20,17 +21,26 @@ import java.util.List;
  *
  * @author roy
  */
-@Document(collection="Answers")
-@TypeAlias("answers")
+@Document(collection="ApplicationForm")
+@TypeAlias("applicationForm")
 @Getter @Setter @NoArgsConstructor
-public class AnswerForm extends BaseEntity {
+public class ApplicationForm extends BaseCompany {
     private static final long serialVersionUID = 1L;
     private String id;
-//    private String formName;
-//    private String companyName;
-//    private String jobName;
-//    private Date startDate;
-//    private Date endDate;
+    private String firstName;
+    private String middleName;
+    private String lastName;
+    private Date dateOfBirth;
+    private String mobile;
+    private String email;
+    private String address;
+    private Integer overallWeight;
+    private String formName;
+    private String jobName;
+    private Date startDate;
+    private Date endDate;
+    @DBRef
+    private List<Category> Category;
     private Object answers;
 
 

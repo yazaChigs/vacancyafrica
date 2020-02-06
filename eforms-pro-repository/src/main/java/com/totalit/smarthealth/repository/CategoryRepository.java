@@ -13,6 +13,6 @@ import org.springframework.stereotype.Repository;
  * @author roy
  */
 @Repository
-public interface CategoryRepository extends AbstractNameCompanyRepository<Category, String>{
-    
+public interface CategoryRepository extends AbstractNameDescRepo<Category, String>{
+    Long countByActive(Boolean active);
 }

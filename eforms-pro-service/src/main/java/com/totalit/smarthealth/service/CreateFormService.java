@@ -15,6 +15,7 @@
  */
 package com.totalit.smarthealth.service;
 
+import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.CreateForm;
 import com.totalit.smarthealth.domain.User;
 
@@ -26,11 +27,11 @@ import java.util.Optional;
  *
  * @author Roy kanavheti
  */
-public interface CreateFormService extends GenericService<CreateForm>  {
+public interface CreateFormService extends GenericCompanyService<CreateForm>  {
 
     public CreateForm findByFormName(String formName);
 
-    public CreateForm findByCompanyName(String companyName);
+    public CreateForm findByCompanyAndFormName(Company company, String formName);
 
     
 }

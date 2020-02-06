@@ -30,11 +30,13 @@ import java.util.Set;
 @Document(collection="CreateForm")
 @TypeAlias("createform")
 @Getter @Setter @NoArgsConstructor
-public class CreateForm extends BaseEntity {
+public class CreateForm extends BaseCompany {
     private static final long serialVersionUID = 1L;
     private String id;
     private String formName;
     private String companyName;
+    private Integer overallWeight;
+    private List<Category> category;
     private String jobName;
     private Date startDate;
     private Date endDate;

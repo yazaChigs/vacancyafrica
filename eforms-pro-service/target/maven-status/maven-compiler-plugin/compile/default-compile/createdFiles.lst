@@ -13,9 +13,9 @@ com/totalit/smarthealth/service/UnitService.class
 com/totalit/smarthealth/service/EmailService.class
 com/totalit/smarthealth/service/PermissionService.class
 com/totalit/smarthealth/service/AccountService.class
+com/totalit/smarthealth/service/ApplicationFormService.class
 com/totalit/smarthealth/service/CreateFormService.class
 com/totalit/smarthealth/service/GenericNameService.class
-com/totalit/smarthealth/service/AnswerFormService.class
 com/totalit/smarthealth/service/PaymentService.class
 com/totalit/smarthealth/service/UserService.class
 com/totalit/smarthealth/service/SupplierService.class
@@ -28,3 +28,5 @@ com/totalit/smarthealth/service/BranchService.class
 com/totalit/smarthealth/service/BranchStockService.class
 com/totalit/smarthealth/service/GenericCompanyService.class
 com/totalit/smarthealth/service/CategoryService.class
+com/totalit/smarthealth/service/AdvertService.class
+com/totalit/smarthealth/service/VisitorService.class
