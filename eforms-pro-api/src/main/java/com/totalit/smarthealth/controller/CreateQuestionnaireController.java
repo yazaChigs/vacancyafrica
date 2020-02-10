@@ -99,9 +99,17 @@ public class CreateQuestionnaireController {
 
     @GetMapping("/get/{item}")
     @ApiOperation(value = "Returns User of Id passed as parameter", response = CreateForm.class)
-    public ResponseEntity<CreateForm> getItem(@RequestHeader(value = "Company") String company, @ApiParam(name = "item", value = "Id used to fetch the object") @PathVariable("item") String item) {
-        Company c = EndPointUtil.getCompany(company);
-        return new ResponseEntity<>(service.findByCompanyAndFormName(c,item), HttpStatus.OK);
+//    public ResponseEntity<CreateForm> getItem(@RequestHeader(value = "Company") String company, @ApiParam(name = "item", value = "Id used to fetch the object") @PathVariable("item") String item) {
+        public ResponseEntity<CreateForm> getItem( @ApiParam(name = "item", value = "Id used to fetch the object") @PathVariable("item") String item) {
+//        Company c =
+        Map<String, Object> response = new HashMap<>();
+        System.err.println(item);
+        CreateForm f = service.findByFormName(item);
+        if(f== null) {
+            response.put("message","form not found");
+//            return new ResponseEntity<String, Object>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(f, HttpStatus.OK);
     }
 
     @GetMapping("/get-all")

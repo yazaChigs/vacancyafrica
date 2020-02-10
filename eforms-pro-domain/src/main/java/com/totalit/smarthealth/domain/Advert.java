@@ -29,6 +29,7 @@ public class Advert extends BaseCompany{
     @DBRef
     private List<Category> category;
     private String formName;
+    private String companyName;
     private String description;
     private Date startDate;
     private Date endDate;

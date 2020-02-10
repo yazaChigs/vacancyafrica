@@ -42,7 +42,7 @@ public class CreateFormServiceImpl implements CreateFormService {
 
     @Override
     public CreateForm findByFormName(String formName) {
-        return null;
+        return repo.findByActiveAndFormName(Boolean.TRUE,formName);
     }
 
     @Override

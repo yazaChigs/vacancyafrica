@@ -61,6 +61,14 @@ public class VisitorResource {
         return new ResponseEntity<>(v, HttpStatus.OK);
     }
 
+    @PostMapping("update")
+    @ApiOperation("Persists User object to the database")
+    public ResponseEntity<?> updateUser(@RequestBody Visitor visitor) {
+        Map<String, Object> response = new HashMap<>();
+
+        return new ResponseEntity<>(service.save(visitor), HttpStatus.OK);
+    }
+
     @PostMapping("/save")
     @ApiOperation("Persists User object to the database")
     public ResponseEntity<Map<String, Object>> saveUser( @RequestBody Visitor visitor) {
