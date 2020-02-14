@@ -10,17 +10,23 @@ package com.totalit.smarthealth.controller;
 import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.User;
 import com.totalit.smarthealth.service.UserService;
+import com.totalit.smarthealth.service.impl.StorageService;
 import com.totalit.smarthealth.util.EndPointUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+
+import java.io.File;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -34,6 +40,8 @@ public class UserResource  {
     public static final Logger logger = LoggerFactory.getLogger(UserResource.class);
     @Autowired
     private UserService userService;
+    @Autowired
+    private StorageService storageService;
    
 
     @PostMapping("/save")
@@ -149,6 +157,49 @@ public class UserResource  {
         itemMessage = itemMessage + " Deleted Successfully"; 
         response.put("message", itemMessage);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/image")
+    @ApiOperation("Save Company Logo")
+    public ResponseEntity<Map<String, Object>> create(@RequestHeader(value = "Company") String company, @RequestParam("image") MultipartFile file, @RequestParam("id") String id) {
+        logger.info("Saving company logo");
+        Map<String, Object> response = new HashMap<>();
+        try {
+//            if(id == null) {User profile = userService.get(id);} else {User profile = userService.get(id);}
+            User profile = userService.get(id);
+
+            String[] fileFrags = file.getOriginalFilename().split("\\.");
+            String extension = fileFrags[fileFrags.length - 1];
+            String fileName = profile.getFirstName()+profile.getLastName().concat(".").concat(extension).toLowerCase();
+            String dir = "USER-LOGOS";
+            Path path = storageService.createNewDirectory(dir);
+            profile.setImage(dir.concat(String.valueOf(File.separatorChar)).concat(fileName));
+
+            storageService.storeFile(file, path, fileName);
+            userService.save(profile);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            response.put("message", "System error occurred saving item " + ex.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("message", "Logo Saved Successfully");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/logo/{companyId}")
+    @ResponseBody
+    public ResponseEntity<org.springframework.core.io.Resource> getFile(@PathVariable("companyId") String companyId) {
+        if(companyId != null) {
+            User user = userService.get(companyId);
+            String name = user.getImage();
+            org.springframework.core.io.Resource file = storageService.loadFile(name);
+            if(file != null){
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
+                        .body(file);
+            }
+        }
+        return null;
     }
     
 }

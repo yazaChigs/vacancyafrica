@@ -31,6 +31,13 @@ public class Advert extends BaseCompany{
     private String formName;
     private String companyName;
     private String description;
+    private Boolean showCompanyName;
+    private String salary;
+    private String salaryPrefix;
+    private Boolean showSalary;
+    private String benefits;
+    private Boolean showBenefits;
+    private String countryOfOrigin;
     private Date startDate;
     private Date endDate;
     private File files;

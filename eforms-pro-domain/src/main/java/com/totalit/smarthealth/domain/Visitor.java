@@ -5,40 +5,75 @@
  */
 package com.totalit.smarthealth.domain;
 
+import com.totalit.smarthealth.domain.util.References;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
  *
  * @author roy
  */
-@Document(collection="Visitor")
+@Document(collection="Visitors")
 @TypeAlias("Visitor")
 @Getter @Setter @NoArgsConstructor
 public class Visitor extends BaseEntity{
     private static final long serialVersionUID = 1L;
     private String firstName;
+    private String middleName;
     private String lastName;
     private String password;
-//    private String checkPassword;
     private String userType;
-//private Set<UserRole> userRoles = new HashSet<>();
     private String userName;
     private String street;
+    private Date dateOfBirth;
     private String city;
+    private String gender;
     private String stateProvince;
+    private String idNumber;
+    private String experience;
+    private String aboutVisitor;
     private String postalCode;
+    private List<References> references;
+    private List<Skill> skills;
+    private List<Certificate> certificates;
     private String country;
     private String email;
     private String mobilePhone;
     private String officePhone;
     private String website;
-    private String taxNumber;
-    private double amountSpent = 0.0;
+    private String logo;
+    private List<String> uploads;
+    private Boolean filesPublic;
+
+    private static class Skill {
+        String skill;
+
+        public String getSkill() {
+            return skill;
+        }
+
+        public void setSkill(String skill) {
+            this.skill = skill;
+        }
+    }
+
+    private static class Certificate {
+        String certificate;
+
+        public String getCertificate() {
+            return certificate;
+        }
+
+        public void setCertificate(String certificate) {
+            this.certificate = certificate;
+        }
+    }
 }

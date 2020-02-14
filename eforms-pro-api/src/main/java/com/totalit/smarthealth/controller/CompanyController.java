@@ -28,16 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -99,9 +90,17 @@ public class CompanyController {
     }
      @GetMapping("/get-item/{id}")
     @ApiOperation(value = "Returns Company of Id passed as parameter", response = Company.class)
-    public ResponseEntity<Company> getItem(@ApiParam(name = "id", value = "Id used to fetch the object") @PathVariable("id") String id) {
-        return new ResponseEntity<>(service.get(id), HttpStatus.OK);
-    }
+    public ResponseEntity<Company> getItem(@RequestHeader(value = "Company") String company, @ApiParam(name = "id", value = "Id used to fetch the object") @PathVariable("id") String id) {
+         System.err.println(company + "\n");
+         System.err.println(id + "\n");
+         Company c = new Company();
+         if (id.equals("null")) {
+            c = service.get(company);
+         } else {
+             c = service.get(id);
+         }
+         return new ResponseEntity<>(c, HttpStatus.OK);
+     }
     
     @DeleteMapping("/delete/{id}")
     @ApiOperation("Set Inactive to Company Object")
@@ -142,10 +141,11 @@ public class CompanyController {
     
     @PostMapping("/image")
     @ApiOperation("Save Company Logo")
-    public ResponseEntity<Map<String, Object>> create(@RequestParam("image") MultipartFile file, @RequestParam("id") String id) {
+    public ResponseEntity<Map<String, Object>> create(@RequestHeader(value = "Company") String company,@RequestParam("image") MultipartFile file, @RequestParam("id") String id) {
         logger.info("Saving company logo");
         Map<String, Object> response = new HashMap<>();
  try {
+     if(id == null) {Company profile = service.get(company);} else {Company profile = service.get(id);}
         Company profile = service.get(id);
               
         String[] fileFrags = file.getOriginalFilename().split("\\.");

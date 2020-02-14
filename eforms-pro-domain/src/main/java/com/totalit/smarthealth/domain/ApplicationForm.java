@@ -29,6 +29,7 @@ public class ApplicationForm extends BaseCompany {
     private String id;
     private String firstName;
     private String middleName;
+    private String companyName;
     private String lastName;
     private Date dateOfBirth;
     private String mobile;
@@ -39,8 +40,11 @@ public class ApplicationForm extends BaseCompany {
     private String jobName;
     private Date startDate;
     private Date endDate;
+    private Boolean filesPublic;
     @DBRef
-    private List<Category> Category;
+    private List<Category> category;
+    @DBRef
+    private Visitor visitor;
     private Object answers;
 
 

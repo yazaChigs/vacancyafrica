@@ -40,7 +40,7 @@ public class User extends BaseCompany {
     private String postalCode;
     private String country;
     private String image;
-    private String resetToken;  
+    private String resetToken;
     @Transient
     private String displayName;   
     private Set<UserRole> userRoles = new HashSet<>();

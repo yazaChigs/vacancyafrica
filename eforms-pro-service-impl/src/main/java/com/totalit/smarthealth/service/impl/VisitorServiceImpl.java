@@ -5,22 +5,15 @@
  */
 package com.totalit.smarthealth.service.impl;
 
-import com.totalit.smarthealth.domain.Company;
-import com.totalit.smarthealth.domain.Customer;
 import com.totalit.smarthealth.domain.Visitor;
-import com.totalit.smarthealth.repository.CustomerRepository;
 import com.totalit.smarthealth.repository.VisitorRepository;
-import com.totalit.smarthealth.service.CustomerService;
 import com.totalit.smarthealth.service.UserService;
 import com.totalit.smarthealth.service.VisitorService;
 import com.totalit.smarthealth.util.AppUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

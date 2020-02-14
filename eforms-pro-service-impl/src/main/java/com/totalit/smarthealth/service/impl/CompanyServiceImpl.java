@@ -98,5 +98,10 @@ public class CompanyServiceImpl implements CompanyService{
     public Long countByActive(Boolean active) {
         return repo.countByActive(active);
     }
-    
+
+    @Override
+    public Company findByNameAndActive(String name, Boolean Active) {
+        return repo.findByNameAndActive(name,Boolean.TRUE);
+    }
+
 }

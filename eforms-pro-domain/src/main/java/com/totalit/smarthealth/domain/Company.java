@@ -37,6 +37,7 @@ public class Company  extends BaseEntity{
     private String postalCode;
     private String country;
     private String website;
+    private String aboutUs;
     private String logo;
     @DBRef
     private Set<Module> modules = new HashSet<>(); 

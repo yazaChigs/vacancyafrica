@@ -53,7 +53,7 @@ public class CreateFormServiceImpl implements CreateFormService {
 
     @Override
     public List<CreateForm> getAll() {
-        return null;
+        return repo.findAll();
     }
 
     @Override

@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.totalit.smarthealth.domain.ApplicationForm;
 import com.totalit.smarthealth.domain.Branch;
 import com.totalit.smarthealth.domain.Company;
-import com.totalit.smarthealth.service.ApplicationFormService;
-import com.totalit.smarthealth.service.BranchService;
-import com.totalit.smarthealth.service.CompanyService;
-import com.totalit.smarthealth.service.UserService;
+import com.totalit.smarthealth.service.*;
 import com.totalit.smarthealth.util.EndPointUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -33,38 +30,24 @@ public class ApplicantController {
     @Autowired
     private ApplicationFormService service;
     @Autowired
+    private CreateFormService formService;
+    @Autowired
     private CompanyService companyService;
 
     @PostMapping("/save")
     @ApiOperation("Persists Branch to Collection")
-    public ResponseEntity<Map<String, Object>> save(@RequestHeader(value = "Company") String company, @RequestBody ApplicationForm applicationForm) {
+    public ResponseEntity<Map<String, Object>> save( @RequestBody ApplicationForm applicationForm) {
         Map<String, Object> response = new HashMap<>();
-        Company c = EndPointUtil.getCompany(company);
+        Company c = new Company();
+        if(!applicationForm.getCompanyName().equals(null)) {
+            c = companyService.findByNameAndActive(applicationForm.getCompanyName(), Boolean.TRUE);
+        }else {
+            companyService.findByNameAndActive(
+                    formService.findByFormName(
+                            applicationForm.getFormName()).getCompanyName(),Boolean.TRUE);
+        }
         applicationForm.setCompany(c);
-//                        ObjectMapper objectMapper = new ObjectMapper();
-//        try {
-//            System.err.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(applicationForm));
-//        } catch (JsonProcessingException e) {
-//            e.printStackTrace();
-//        }
-
-//        boolean exist = false;
-//        try{
-//            if (!service.checkDuplicate(applicationForm, applicationForm, c)) {
                 ApplicationForm s = service.save(applicationForm);
-//                response.put("item", s);
-//            } else {
-//                exist = true;
-//            }
-//        }
-//        catch(Exception ex){
-//            response.put("message", ex.getMessage());
-//            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//        if(exist){
-//            response.put("duplicate", true);
-//            return new ResponseEntity<>(response, HttpStatus.OK);
-//        }
         response.put("message", "Branch Saved Successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

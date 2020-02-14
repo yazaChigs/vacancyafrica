@@ -60,6 +60,7 @@ public class CreateQuestionnaireController {
         Map<String, Object> response = new HashMap<>();
         Company c = EndPointUtil.getCompany(company);
         createForm.setCompany(c);
+        createForm.setCompanyId(c.getId());
         CreateForm form = service.save(createForm);
 //        boolean exist = false;
 //        try{
@@ -103,7 +104,6 @@ public class CreateQuestionnaireController {
         public ResponseEntity<CreateForm> getItem( @ApiParam(name = "item", value = "Id used to fetch the object") @PathVariable("item") String item) {
 //        Company c =
         Map<String, Object> response = new HashMap<>();
-        System.err.println(item);
         CreateForm f = service.findByFormName(item);
         if(f== null) {
             response.put("message","form not found");
@@ -114,7 +114,15 @@ public class CreateQuestionnaireController {
 
     @GetMapping("/get-all")
     @ApiOperation(value = "returns all forms as list", response = CreateForm.class)
-    public ResponseEntity<?> getAll(@RequestHeader(value = "Company") String company) throws JsonProcessingException {
+    public ResponseEntity<?> getAll() throws JsonProcessingException {
+        logger.info("Retrieving All Forms{}");
+        List<CreateForm> forms = service.getAll();
+        return new ResponseEntity<>(forms, HttpStatus.OK);
+    }
+
+    @GetMapping("/get-all-by-company")
+    @ApiOperation(value = "returns all forms as list", response = CreateForm.class)
+    public ResponseEntity<?> getAllForCompany(@RequestHeader(value = "Company") String company) throws JsonProcessingException {
         logger.info("Retrieving All Forms{}");
         Company c = EndPointUtil.getCompany(company);
         List<CreateForm> forms = service.getByCompany(c);

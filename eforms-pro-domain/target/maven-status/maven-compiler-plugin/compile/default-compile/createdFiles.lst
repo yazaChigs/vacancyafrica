@@ -1,4 +1,5 @@
 com/totalit/smarthealth/domain/util/BaseNameType.class
+com/totalit/smarthealth/domain/util/References.class
 com/totalit/smarthealth/util/AppUtil.class
 com/totalit/smarthealth/domain/Sale.class
 com/totalit/smarthealth/domain/util/ItemType.class
@@ -18,6 +19,7 @@ com/totalit/smarthealth/domain/util/SaleStatus.class
 com/totalit/smarthealth/domain/util/EmailAuthentication.class
 com/totalit/smarthealth/domain/ExpenseCategory.class
 com/totalit/smarthealth/domain/util/Title.class
+com/totalit/smarthealth/domain/Visitor$Skill.class
 com/totalit/smarthealth/domain/InventoryItem.class
 com/totalit/smarthealth/domain/PurchaseItem.class
 com/totalit/smarthealth/domain/Purchase.class
@@ -36,6 +38,7 @@ com/totalit/smarthealth/domain/util/TaxType.class
 com/totalit/smarthealth/domain/Module.class
 com/totalit/smarthealth/domain/util/PaymentDescription.class
 com/totalit/smarthealth/domain/BaseNameCompany.class
+com/totalit/smarthealth/domain/Visitor$Certificate.class
 com/totalit/smarthealth/domain/Customer.class
 com/totalit/smarthealth/domain/Currency.class
 com/totalit/smarthealth/domain/PaymentReceived.class

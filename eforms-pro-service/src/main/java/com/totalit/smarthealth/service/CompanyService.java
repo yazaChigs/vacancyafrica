@@ -13,4 +13,6 @@ import com.totalit.smarthealth.domain.Company;
  */
 public interface CompanyService extends GenericService<Company> {
     Long countByActive(Boolean active);
+    Company findByNameAndActive(String name, Boolean Active);
+
 }

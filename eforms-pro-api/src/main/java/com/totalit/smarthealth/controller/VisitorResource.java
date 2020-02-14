@@ -6,6 +6,8 @@
 package com.totalit.smarthealth.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.domain.User;
 import com.totalit.smarthealth.domain.UserRole;
@@ -13,18 +15,26 @@ import com.totalit.smarthealth.domain.Visitor;
 import com.totalit.smarthealth.service.UserRoleService;
 import com.totalit.smarthealth.service.UserService;
 import com.totalit.smarthealth.service.VisitorService;
+import com.totalit.smarthealth.service.impl.StorageService;
 import com.totalit.smarthealth.util.EndPointUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,6 +51,9 @@ public class VisitorResource {
     private VisitorService service;
     @Autowired
     private UserRoleService userRoleService;
+    @Autowired
+    private StorageService storageService;
+
 
 
     @PostMapping("/authentication")
@@ -149,22 +162,6 @@ public class VisitorResource {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-//    @DeleteMapping("/delete")
-//    @ApiOperation("Deactivate User Account")
-//    public ResponseEntity<Map<String, Object>> deactivateUser(@ApiParam(name = "id", value = "Id of object to be deleted") @RequestParam("id") String id) {
-//        logger.info("Deactivating User Account");
-//        Map<String, Object> response = new HashMap<>();
-//        try {
-//            service.delete(service.get(id));
-//            
-//        } catch (Exception ex) {
-//            response.put("message", "System error occurred deleting item");
-//            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//        response.put("message", "User Account Deactivated");
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
-
     @DeleteMapping("/delete/{id}")
     @ApiOperation("Set Inactive to User Object")
     public ResponseEntity<Map<String, Object>> delete(@ApiParam(name = "id", value = "id for object to be deleted") @PathVariable("id") String id) {
@@ -191,5 +188,120 @@ public class VisitorResource {
         String hashedPassword = encoder.encode(pass);
         return hashedPassword;
     }
-    
+
+    @PostMapping("/image")
+    @ApiOperation("Save Company Logo")
+    public ResponseEntity<Map<String, Object>> create(@RequestParam("image") MultipartFile file, @RequestParam("id") String id) {
+        logger.info("Saving company logo");
+        Map<String, Object> response = new HashMap<>();
+        try {
+//            if(id == null) {User profile = userService.get(id);} else {User profile = userService.get(id);}
+            Visitor profile = service.get(id);
+
+            String[] fileFrags = file.getOriginalFilename().split("\\.");
+            String extension = fileFrags[fileFrags.length - 1];
+            String fileName = profile.getFirstName()+profile.getLastName().concat(".").concat(extension).toLowerCase();
+            String dir = "VISITOR-LOGOS";
+            Path path = storageService.createNewDirectory(dir);
+            profile.setLogo(dir.concat(String.valueOf(File.separatorChar)).concat(fileName));
+
+            storageService.storeFile(file, path, fileName);
+            service.save(profile);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            response.put("message", "System error occurred saving item " + ex.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("message", "Logo Saved Successfully");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/upload")
+    @ApiOperation("Upload visitor files")
+    public ResponseEntity<Map<String, Object>> uploadFiles(@RequestParam("files") List<MultipartFile> files, @RequestParam("id") String id) {
+        logger.info("uploading files");
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<String> uploads = new ArrayList<>();
+            Visitor profile = service.get(id);
+            String dir = profile.getFirstName()+profile.getLastName() + "-uploads";
+            Path path = storageService.createNewDirectory(dir);
+            files.forEach(file -> {
+                String[] fileFrags = file.getOriginalFilename().split("\\.");
+                String extension = fileFrags[fileFrags.length - 1];
+                String fileName = fileFrags[0].concat(".").concat(extension).toLowerCase();
+//                uploads.add(dir.concat(String.valueOf(File.separatorChar)).concat(fileName));
+                profile.getUploads().add(dir.concat(String.valueOf(File.separatorChar)).concat(fileName));
+//                profile.setUploads(dir.concat(String.valueOf(File.separatorChar)).concat(fileName));
+
+                storageService.storeFile(file, path, fileName);
+
+            });
+//            profile.getUploads().add(dir.concat(String.valueOf(File.separatorChar)).concat(fileName));
+//            profile.setUploads(uploads);
+            service.save(profile);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            response.put("message", "System error occurred saving item " + ex.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("message", "Logo Saved Successfully");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/uploaded-files/{companyId}")
+    @ResponseBody
+    public ResponseEntity<?> getuploadsNames(@PathVariable("companyId") String companyId) {
+        if(companyId != null) {
+            Visitor visitor = service.get(companyId);
+            List<org.springframework.core.io.Resource> files = new ArrayList<>();
+            List<String> names = new ArrayList<>();
+            visitor.getUploads().forEach(item-> {
+                org.springframework.core.io.Resource file = storageService.loadFile(item);
+                files.add(file);
+            });
+            files.forEach(name->{
+               names.add(name.getFilename());
+            });
+            if(names != null){
+                return new ResponseEntity<>(names, HttpStatus.OK);
+            }
+        }
+        return null;
+    }
+
+    @GetMapping("/logo/{companyId}")
+    @ResponseBody
+    public ResponseEntity<org.springframework.core.io.Resource> getFile(@PathVariable("companyId") String companyId) {
+        if(companyId != null) {
+            Visitor visitor = service.get(companyId);
+            String name = visitor.getLogo();
+            org.springframework.core.io.Resource file = storageService.loadFile(name);
+            if(file != null){
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
+                        .body(file);
+            }
+            else {return null;}
+        }
+        return null;
+    }
+
+    @GetMapping("/get-file/{filaName}/{visitorId}")
+    @ResponseBody
+    public ResponseEntity<org.springframework.core.io.Resource> openFile(@PathVariable("filaName") String filaName,@PathVariable("visitorId") String visitorId) {
+        if(visitorId != null) {
+            Visitor visitor = service.get(visitorId);
+            org.springframework.core.io.Resource files;
+            for (String item : visitor.getUploads()) {
+                org.springframework.core.io.Resource file = storageService.loadFile(item);
+                if(file.getFilename().equals(filaName)) {
+                    return ResponseEntity.ok()
+                            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
+                            .body(file);
+                }
+            }
+            }
+        return null;
+    }
 }
