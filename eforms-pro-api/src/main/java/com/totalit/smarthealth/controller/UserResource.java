@@ -192,12 +192,14 @@ public class UserResource  {
         if(companyId != null) {
             User user = userService.get(companyId);
             String name = user.getImage();
-            org.springframework.core.io.Resource file = storageService.loadFile(name);
-            if(file != null){
-                return ResponseEntity.ok()
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
-                        .body(file);
-            }
+            if(storageService.loadFile(name).exists()) {
+                org.springframework.core.io.Resource file = storageService.loadFile(name);
+                if (file != null) {
+                    return ResponseEntity.ok()
+                            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
+                            .body(file);
+                }
+            } else return null;
         }
         return null;
     }

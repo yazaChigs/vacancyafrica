@@ -3,11 +3,13 @@ package com.totalit.smarthealth.service.impl;
 
 import com.totalit.smarthealth.domain.Advert;
 import com.totalit.smarthealth.domain.ApplicationForm;
+import com.totalit.smarthealth.domain.Category;
 import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.repository.AdvertRepo;
 import com.totalit.smarthealth.repository.ApplicationFormRepo;
 import com.totalit.smarthealth.service.AdvertService;
 import com.totalit.smarthealth.service.ApplicationFormService;
+import com.totalit.smarthealth.service.UserService;
 import com.totalit.smarthealth.util.AppUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +33,8 @@ public class AdvertServiceImpl implements AdvertService {
 
     @Autowired
     private AdvertRepo repo;
+    @Resource
+    private UserService userService;
 
 
     @Override
@@ -39,7 +44,7 @@ public class AdvertServiceImpl implements AdvertService {
 
     @Override
     public Advert get(String id) {
-        return null;
+        return repo.findById(id).get();
     }
 
     @Override
@@ -54,17 +59,29 @@ public class AdvertServiceImpl implements AdvertService {
 
     @Override
     public Advert save(Advert t) {
-        if (null == t.getId()) {
-//            t.setCreatedBy(getCurrentUser());
+//        if (null == t.getId()) {
+////            t.setCreatedBy(getCurrentUser());
+//            t.setDateCreated(new Date());
+//            t.setUuid(AppUtil.generateUUID());
+////            t.setPassword(encryptPassword(t.getPassword()));
+//            return repo.save(t);
+//        }
+////          if(t.getCreatedById()!=null){
+////               t.setCreatedBy(get(t.getCreatedById()));
+////           }
+////        t.setModifiedBy(getCurrentUser());
+//        t.setDateModified(new Date());
+//        return repo.save(t);
+        if (t.getId() == null) {
+            t.setCreatedBy(userService.getCurrentUser());
             t.setDateCreated(new Date());
             t.setUuid(AppUtil.generateUUID());
-//            t.setPassword(encryptPassword(t.getPassword()));
             return repo.save(t);
         }
-//          if(t.getCreatedById()!=null){
-//               t.setCreatedBy(get(t.getCreatedById()));
-//           }
-//        t.setModifiedBy(getCurrentUser());
+        if(t.getCreatedById()!=null){
+            t.setCreatedBy(userService.get(t.getCreatedById()));
+        }
+        t.setModifiedBy(userService.getCurrentUser());
         t.setDateModified(new Date());
         return repo.save(t);
     }
@@ -98,5 +115,15 @@ public class AdvertServiceImpl implements AdvertService {
     @Override
     public Boolean checkDuplicate(Advert current, Advert old, Company company) {
         return null;
+    }
+
+    @Override
+    public List<Advert> findByCompanyAndActive(Company company, Boolean active) {
+        return repo.findByCompanyAndActive(company, active);
+    }
+
+    @Override
+    public List<Advert> findByCategoryAndActive(Category category, Boolean active) {
+        return repo.findByCategoryAndActive(category, Boolean.TRUE);
     }
 }

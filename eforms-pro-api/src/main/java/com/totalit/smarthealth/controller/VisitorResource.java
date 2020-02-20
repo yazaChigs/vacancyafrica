@@ -256,15 +256,17 @@ public class VisitorResource {
             Visitor visitor = service.get(companyId);
             List<org.springframework.core.io.Resource> files = new ArrayList<>();
             List<String> names = new ArrayList<>();
-            visitor.getUploads().forEach(item-> {
-                org.springframework.core.io.Resource file = storageService.loadFile(item);
-                files.add(file);
-            });
-            files.forEach(name->{
-               names.add(name.getFilename());
-            });
-            if(names != null){
-                return new ResponseEntity<>(names, HttpStatus.OK);
+            if(visitor.getUploads()!= null) {
+                visitor.getUploads().forEach(item -> {
+                    org.springframework.core.io.Resource file = storageService.loadFile(item);
+                    files.add(file);
+                });
+                files.forEach(name -> {
+                    names.add(name.getFilename());
+                });
+                if (names != null) {
+                    return new ResponseEntity<>(names, HttpStatus.OK);
+                }
             }
         }
         return null;

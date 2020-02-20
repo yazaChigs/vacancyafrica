@@ -39,6 +39,7 @@ public class Visitor extends BaseEntity{
     private String stateProvince;
     private String idNumber;
     private String experience;
+    private List<Category> jobCategory;
     private String aboutVisitor;
     private String postalCode;
     private List<References> references;

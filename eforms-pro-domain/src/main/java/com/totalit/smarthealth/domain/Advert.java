@@ -37,7 +37,7 @@ public class Advert extends BaseCompany{
     private Boolean showSalary;
     private String benefits;
     private Boolean showBenefits;
-    private String countryOfOrigin;
+    private String countryOfPlacement;
     private Date startDate;
     private Date endDate;
     private File files;

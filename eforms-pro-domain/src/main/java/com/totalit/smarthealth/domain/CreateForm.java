@@ -36,6 +36,7 @@ public class CreateForm extends BaseCompany {
     private String formName;
     private String companyName;
     private String companyId;
+    private Boolean saveAsCustomTemplate;
     private Integer overallWeight;
     private List<Category> category;
     private String jobName;

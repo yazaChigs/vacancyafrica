@@ -17,6 +17,10 @@ package com.totalit.smarthealth.service;
 
 import com.totalit.smarthealth.domain.Advert;
 import com.totalit.smarthealth.domain.ApplicationForm;
+import com.totalit.smarthealth.domain.Category;
+import com.totalit.smarthealth.domain.Company;
+
+import java.util.List;
 
 
 /**
@@ -25,6 +29,8 @@ import com.totalit.smarthealth.domain.ApplicationForm;
  */
 public interface AdvertService extends GenericCompanyService<Advert>  {
 
+    public List<Advert> findByCompanyAndActive(Company company, Boolean active);
+    public List<Advert> findByCategoryAndActive(Category category, Boolean active);
 
     
 }

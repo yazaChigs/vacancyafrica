@@ -18,7 +18,11 @@ package com.totalit.smarthealth.repository;
 
 import com.totalit.smarthealth.domain.Advert;
 import com.totalit.smarthealth.domain.ApplicationForm;
+import com.totalit.smarthealth.domain.Category;
+import com.totalit.smarthealth.domain.Company;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  *
@@ -26,4 +30,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface AdvertRepo extends AbstractCompanyRepository<Advert, String >{
+    public List<Advert> findByCompanyAndActive(Company company, Boolean active);
+    public List<Advert> findByCategoryAndActive(Category category, Boolean active);
 }

@@ -1,7 +1,10 @@
 package com.totalit.smarthealth.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.totalit.smarthealth.domain.Advert;
 import com.totalit.smarthealth.domain.ApplicationForm;
+import com.totalit.smarthealth.domain.Category;
 import com.totalit.smarthealth.domain.Company;
 import com.totalit.smarthealth.service.AdvertService;
 import com.totalit.smarthealth.service.ApplicationFormService;
@@ -17,7 +20,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -39,12 +44,6 @@ public class AdvertController {
         Map<String, Object> response = new HashMap<>();
         Company c = EndPointUtil.getCompany(company);
         advert.setCompany(c);
-//                        ObjectMapper objectMapper = new ObjectMapper();
-//        try {
-//            System.err.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(applicationForm));
-//        } catch (JsonProcessingException e) {
-//            e.printStackTrace();
-//        }
 
 //        boolean exist = false;
 //        try{
@@ -52,6 +51,7 @@ public class AdvertController {
                 Advert s = service.save(advert);
 //                response.put("item", s);
 //            } else {
+
 //                exist = true;
 //            }
 //        }
@@ -69,11 +69,46 @@ public class AdvertController {
 
     @GetMapping("/get-all")
     @ApiOperation("Returns All Ads")
-//    public ResponseEntity<?> getAll(@RequestHeader(value = "Company") String company) {
-        public ResponseEntity<?> getAll() {
+    public ResponseEntity<?> getAll() {
+//        public ResponseEntity<?> getAll() {
         logger.info("Retrieving All ads ");
-//        Company c = EndPointUtil.getCompany(company);
         return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("/get-all-by-company")
+    @ApiOperation("Returns All Ads By company")
+    public ResponseEntity<?> getAllByCompany(@RequestHeader(value = "Company") String company) {
+//        public ResponseEntity<?> getAll() {
+        logger.info("Retrieving All ads ");
+        Company c = EndPointUtil.getCompany(company);
+        return new ResponseEntity<>(service.findByCompanyAndActive(c,Boolean.TRUE), HttpStatus.OK);
+    }
+
+    @PostMapping("/get-by-category")
+    @ApiOperation("Returns All Ads")
+    public ResponseEntity<?> getAllByCategory(@RequestBody List<Category> categories) {
+//        public ResponseEntity<?> getAll() {
+        System.err.println("***************");
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            System.err.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(categories));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        System.err.println("***************");
+
+        Map<String, Object> response = new HashMap<>();
+        logger.info("Retrieving All ads ");
+        List<Advert> advertList = new ArrayList<>();
+        categories.forEach(category -> {
+            service.findByCategoryAndActive(category,Boolean.TRUE).forEach(advert -> {
+               advertList.add(advert);
+            });
+        });
+//        Company c = EndPointUtil.getCompany(company);
+
+
+        return new ResponseEntity<>(advertList, HttpStatus.OK);
     }
 
     @GetMapping("/get-item/{id}")
